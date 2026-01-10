@@ -1,9 +1,9 @@
 const CACHE_NAME = 'athena-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/athena-icon.svg',
-  '/manifest.json'
+  './',
+  './index.html',
+  './athena-icon.svg',
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {
