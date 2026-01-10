@@ -8,12 +8,21 @@ const urlsToCache = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('SW: Start caching bestanden');
+      return Promise.allSettled(
+        urlsToCache.map(url => {
+          return cache.add(url).catch(err => console.warn(`SW: Kon ${url} niet cachen:`, err));
+        })
+      );
+    })
   );
 });
 
 self.addEventListener('fetch', event => {
+  // Alleen GET requests cachen
+  if (event.request.method !== 'GET') return;
+  
   event.respondWith(
     caches.match(event.request)
       .then(response => response || fetch(event.request))
