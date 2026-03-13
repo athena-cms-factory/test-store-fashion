@@ -114,6 +114,21 @@ jobs:
             exit 1
           fi
           TARGET_REPO="$DEFAULT_OWNER/$SITE"
+          
+          # AUTOMATISCHE CREATIE: Check of repo bestaat, zo niet: aanmaken!
+          if ! gh repo view "$TARGET_REPO" >/dev/null 2>&1; then
+            echo "✨ Repository $TARGET_REPO bestaat nog niet. Aanmaken..."
+            gh repo create "$TARGET_REPO" --public --description "Athena CMS Site: $SITE"
+            sleep 5
+          fi
+
+          # FAILSAFE: Check of GitHub Pages actief is, zo niet: activeren!
+          if ! gh api repos/$TARGET_REPO/pages >/dev/null 2>&1; then
+            echo "🌐 Activeren van GitHub Pages voor $TARGET_REPO..."
+            gh api --method POST /repos/$TARGET_REPO/pages -f source='{"branch": "gh-pages", "path": "/"}' || echo "⚠️ Pages kon nog niet geactiveerd worden"
+          fi
+
+          echo "📤 Pushen van subtree $PREFIX naar $TARGET_REPO op branch $BRANCH"
           REMOTE_URL="https://x-access-token:${API_TOKEN_GITHUB}@github.com/${TARGET_REPO}.git"
           SPLIT_SHA=$(git subtree split --prefix=$PREFIX $BRANCH)
           git push "$REMOTE_URL" "$SPLIT_SHA":refs/heads/main --force
