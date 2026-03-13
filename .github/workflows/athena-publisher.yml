@@ -111,8 +111,8 @@ jobs:
 
       - name: 🚀 Push Subtree to Client Repo
         env:
-          GITHUB_TOKEN: ${{ secrets.ATHENA_DEPLOY_TOKEN || secrets.GITHUB_TOKEN }}
-          API_TOKEN_GITHUB: ${{ secrets.ATHENA_DEPLOY_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ATHENA_DEPLOY_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.ATHENA_DEPLOY_TOKEN }}
           DEFAULT_OWNER: "athena-cms-factory"
         run: |
           SITE="${{ matrix.site }}"
