@@ -1,1 +1,1 @@
-https://athena-cms-factory.github.io/ai-consultant-smartbe
+https://athena-cms-factory.github.io/ai-consultant-smartbe 

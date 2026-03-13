@@ -1,1 +1,1 @@
-https://athena-cms-factory.github.io/urban-oasis-warm
+https://athena-cms-factory.github.io/urban-oasis-warm 
