@@ -448,5 +448,15 @@
     "repoUrl": "https://github.com/KarelTestSpecial/ath-urban-sneakers-store",
     "liveUrl": "https://kareltestspecial.github.io/ath-urban-sneakers-store",
     "port": 5019
+  },
+  {
+    "id": "bakkerij-de-graankorrel",
+    "name": "bakkerij-de-graankorrel",
+    "siteType": "basis",
+    "generatedAt": "2026-01-05T20:21:31.607Z",
+    "governance_mode": "dev-mode",
+    "repoUrl": "https://github.com/KarelTestSpecial/ath-bakkerij-de-graankorrel",
+    "liveUrl": "https://kareltestspecial.github.io/ath-bakkerij-de-graankorrel",
+    "port": 5007
   }
 ]

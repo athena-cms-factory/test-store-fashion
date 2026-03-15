@@ -37,6 +37,8 @@ import { generateWithAI } from '../5-engine/core/ai-engine.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '../..');
+console.log(`📂 Resolved Root: ${root}`);
+console.log(`📂 Resolved Input: ${path.join(root, 'input')}`);
 
 // --- INITIALIZATION ---
 const configManager = new AthenaConfigManager(root);
@@ -54,6 +56,16 @@ const systemCtrl = new SystemController(configManager, lm, sm, execService);
 const toolCtrl = new ToolController(configManager, execService);
 const serverCtrl = new ServerController(configManager, pm, execService);
 const githubCtrl = new GithubController(configManager, execService);
+
+// --- GLOBAL ERROR HANDLING ---
+process.on('uncaughtException', (err) => {
+    console.error('🔥 UNCAUGHT EXCEPTION:', err.message);
+    console.error(err.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('🔥 UNHANDLED REJECTION:', reason);
+});
 
 const app = express();
 const port = 5000; // Forceer dashboard op poort 5001 voor de Site Reviewer
@@ -99,7 +111,7 @@ app.post('/api/onboard/chat', async (req, res) => {
     try {
         const response = await generateWithAI(fullPrompt, { 
             isJson: false,
-            modelStack: "gemini-3-flash-preview"
+            modelStack: process.env.AI_MODEL_DEFAULT || process.env.AI_MODEL || "gemini-3-flash-preview"
         });
         res.json({ response: response || "Excuses, ik kon geen antwoord genereren. Probeer het nog eens." });
     } catch (e) {
@@ -144,7 +156,14 @@ app.get('/api/system/logs', (req, res) => res.json(systemCtrl.getLogsStatus()));
 app.post('/api/system/logs/rotate', async (req, res) => res.json(await systemCtrl.rotateLogs()));
 app.post('/api/system/logs/clear', (req, res) => res.json(systemCtrl.clearLogs()));
 app.post('/api/system/secrets/sync', async (req, res) => res.json(await systemCtrl.syncSecrets()));
-app.get('/api/system-status', (req, res) => res.json(systemCtrl.getSystemStatus()));
+app.get('/api/system-status', (req, res) => {
+    try {
+        res.json(systemCtrl.getSystemStatus());
+    } catch (e) {
+        console.error("System Status Error:", e.message);
+        res.status(500).json({ error: e.message });
+    }
+});
 app.get('/api/config', (req, res) => res.json(systemCtrl.getSAConfig()));
 app.get('/api/settings', (req, res) => res.json(systemCtrl.getSettings()));
 app.post('/api/settings', (req, res) => res.json(systemCtrl.updateSettings(req.body)));

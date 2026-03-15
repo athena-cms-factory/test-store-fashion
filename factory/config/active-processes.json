@@ -1,23 +1,30 @@
 {
   "5002": {
-    "pid": 23140,
+    "pid": 4123,
     "id": "athena-dock",
     "type": "dock",
-    "startTime": "2026-03-12T17:37:19.695Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/athena-dock-dock.log"
+    "startTime": "2026-03-15T17:44:39.220Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/athena-dock-dock.log"
   },
   "5003": {
-    "pid": 16255,
+    "pid": 6413,
     "id": "layout-editor",
     "type": "editor",
-    "startTime": "2026-03-12T18:24:34.949Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/layout-editor-editor.log"
+    "startTime": "2026-03-15T17:45:31.073Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/layout-editor-editor.log"
   },
   "5004": {
-    "pid": 9048,
+    "pid": 7135,
     "id": "media-mapper",
     "type": "editor",
-    "startTime": "2026-03-12T18:03:47.136Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/media-mapper-editor.log"
+    "startTime": "2026-03-15T17:45:49.394Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/media-mapper-editor.log"
+  },
+  "5017": {
+    "pid": 3321,
+    "id": "athena-promo",
+    "type": "preview",
+    "startTime": "2026-03-15T17:44:22.018Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/athena-promo-preview.log"
   }
 }

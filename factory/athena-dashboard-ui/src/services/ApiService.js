@@ -108,7 +108,7 @@ export const ApiService = {
   cleanupTempData: () => fetch(`${API_BASE}/storage/cleanup-temp`, { method: 'POST' }).then(res => res.json()),
 
   // Settings
-  updateConfig: (config) => fetch(`${API_BASE}/system/config/update`, {
+  updateConfig: (config) => fetch(`${API_BASE}/settings`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(config)

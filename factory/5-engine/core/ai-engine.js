@@ -55,7 +55,12 @@ export async function generateWithAI(prompt, { isJson = true, modelStack = null,
     if (modelStack) {
         sequence = typeof modelStack === 'string' ? modelStack.split(',').map(m => m.trim()) : modelStack;
     } else {
+        // Gebruik eerst het primaire model uit .env indien ingesteld
+        const primaryModel = process.env.AI_MODEL_DEFAULT || process.env.AI_MODEL;
+        if (primaryModel) sequence.push(primaryModel);
+
         sequence = [
+            ...sequence,
             ...config.groq,
             ...config["google-1"],
             ...config["openrouter-1"],
