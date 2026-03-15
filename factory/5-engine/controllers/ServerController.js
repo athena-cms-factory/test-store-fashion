@@ -149,7 +149,7 @@ export class ServerController {
     async startMediaVisualizer(siteName = null) {
         const port = this.configManager.get('ports.media') || 5004;
         await this.pm.stopProcessByPort(port);
-        const args = ['5-engine/media-mapper.js'];
+        const args = ['5-engine/media-mapper.js', '--port', port.toString()];
         if (siteName) args.push(siteName);
         this.pm.startProcess('media-mapper', 'editor', port, process.execPath, args, { cwd: this.factoryDir });
         return { success: true, message: `Media Mapper starting on port ${port}...` };

@@ -23,13 +23,25 @@ let activeProject = null;
 
 // --- CLI OVERRIDE ---
 const args = process.argv.slice(2);
+let portArgIndex = -1;
+for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--port' || args[i] === '-p') {
+        portArgIndex = i + 1;
+        break;
+    }
+}
+if (portArgIndex > 0 && args[portArgIndex]) {
+    process.env.MEDIA_MAPPER_PORT = args[portArgIndex];
+    console.log(`🎯 Port set from CLI: ${args[portArgIndex]}`);
+    args.splice(portArgIndex - 1, 2);
+}
 if (args[0]) {
     activeProject = args[0];
     console.log(`🎯 Initial site set from CLI: ${activeProject}`);
 }
 
 const app = express();
-const port = process.env.MEDIA_MAPPER_PORT || 4004;
+const port = process.env.MEDIA_MAPPER_PORT || 5004;
 
 // --- CORS & BODY PARSING ---
 app.use(express.json());
