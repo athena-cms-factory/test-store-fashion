@@ -68,10 +68,13 @@ export class ServerController {
             if (!systemPorts.includes(apiPort)) systemPorts.push(apiPort);
 
             const addServer = (port, info) => {
-                if (!activeMap.has(port)) {
-                    if (port === (this.configManager.get('ports.dashboard') || 5001)) return;
-                    const isSystem = systemPorts.includes(port);
-                    activeMap.set(port, { ...info, isSystem });
+                const portNum = parseInt(port);
+                if (!activeMap.has(portNum)) {
+                    // Verberg het dashboard zelf uit de lijst (poort 5001)
+                    if (portNum === 5001) return;
+                    
+                    const isSystem = systemPorts.includes(portNum) || [5000, 5001, 5002, 5003, 5004, 5005].includes(portNum);
+                    activeMap.set(portNum, { ...info, isSystem, port: portNum });
                 }
             };
 

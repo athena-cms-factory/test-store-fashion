@@ -86,6 +86,14 @@ export class SiteController {
                 } catch (e) { }
             }
 
+            let deployData = null;
+            const deployPath = path.join(sitePath, 'project-settings', 'deployment.json');
+            if (fs.existsSync(deployPath)) {
+                try {
+                    deployData = JSON.parse(fs.readFileSync(deployPath, 'utf8'));
+                } catch (e) { }
+            }
+
             const sitePort = this.getSitePort(site, sitePath);
             return {
                 id: site,
@@ -96,6 +104,7 @@ export class SiteController {
                 path: sitePath,
                 port: sitePort,
                 localUrl: `http://localhost:5000/previews/${site}/`,
+                deployData,
                 siteType,
                 status,
                 isInstalled

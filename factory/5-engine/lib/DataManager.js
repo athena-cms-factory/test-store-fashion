@@ -304,6 +304,46 @@ export class AthenaDataManager {
     }
 
     /**
+     * Compare local data with temporary data (from Sheet)
+     */
+    compareSources(projectName) {
+        const paths = this.resolvePaths(projectName);
+        const localDir = paths.dataDir;
+        const tempDir = path.join(paths.siteDir, 'src/data-temp');
+
+        if (!fs.existsSync(localDir) || !fs.existsSync(tempDir)) {
+            return { success: false, message: "Lokale of tijdelijke data map niet gevonden." };
+        }
+
+        const localFiles = fs.readdirSync(localDir).filter(f => f.endsWith('.json'));
+        const diffs = [];
+
+        localFiles.forEach(file => {
+            const localPath = path.join(localDir, file);
+            const tempPath = path.join(tempDir, file);
+
+            if (fs.existsSync(tempPath)) {
+                const localData = fs.readFileSync(localPath, 'utf8');
+                const tempData = fs.readFileSync(tempPath, 'utf8');
+
+                if (localData !== tempData) {
+                    diffs.push({
+                        file,
+                        status: 'changed',
+                        message: `Bestand ${file} is gewijzigd op Google Sheets.`
+                    });
+                }
+            }
+        });
+
+        return {
+            success: true,
+            hasDifferences: diffs.length > 0,
+            differences: diffs
+        };
+    }
+
+    /**
      * Sync local JSON data back to Google Sheet
      */
     async syncToSheet(projectName) {
