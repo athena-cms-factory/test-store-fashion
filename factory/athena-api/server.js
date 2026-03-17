@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import multer from 'multer';
 import cors from 'cors';
 import 'dotenv/config';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 // Managers & Libs
 import { AthenaConfigManager } from '../5-engine/lib/ConfigManager.js';
@@ -88,6 +89,17 @@ const upload = multer({ storage });
 app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 🔱 v8.8 Intelligent Static Routing for External Sites
+// We koppelen elke externe site aan zijn eigen specifieke route
+const externalDir = path.join(root, 'sites-external');
+if (fs.existsSync(externalDir)) {
+    const sites = fs.readdirSync(externalDir).filter(f => fs.statSync(path.join(externalDir, f)).isDirectory());
+    sites.forEach(site => {
+        app.use(`/${site}`, express.static(path.join(externalDir, site)));
+    });
+}
+
 app.use(express.static(root));
 
 // --- STRATEGY CHAT API ---
@@ -352,6 +364,71 @@ app.get('/api/system/todo', (req, res) => {
     } else {
         res.json({ content: "# TODO\n\n_TODO.md niet gevonden._" });
     }
+});
+
+// 🔱 v8.8 Intelligent Static Routing for External Sites
+// Zorgt dat assets (JS/CSS) laden, zelfs als ze een hardcoded base-pad hebben
+if (fs.existsSync(externalDir)) {
+    const sites = fs.readdirSync(externalDir).filter(f => fs.statSync(path.join(externalDir, f)).isDirectory());
+    sites.forEach(site => {
+        // Serveer de site op zijn eigen naam (voor assets)
+        app.use(`/${site}`, express.static(path.join(externalDir, site)));
+        console.log(`📂 Site asset route active: /${site}`);
+    });
+}
+
+// 🔱 v8.8 Ultra-Robust Dynamic Site Proxy & Static Server
+// Dient als centrale hub (poort 5000) voor álle site previews om CORS te omzeilen
+app.use('/previews/:id', async (req, res, next) => {
+    const siteId = req.params.id;
+    let siteDir = path.join(root, 'sites', siteId);
+    let isExternal = false;
+
+    if (!fs.existsSync(siteDir)) {
+        siteDir = path.join(root, 'sites-external', siteId);
+        isExternal = true;
+    }
+
+    if (!fs.existsSync(siteDir)) {
+        return res.status(404).json({ error: `Site '${siteId}' niet gevonden op schijf.` });
+    }
+
+    if (isExternal) {
+        // Voor externe sites: serveer statische bestanden direct via de proxy route
+        // We verwijderen /previews/:id van het pad voor de static server
+        const subPath = req.url === '/' ? '/index.html' : req.url;
+        const filePath = path.join(siteDir, subPath.split('?')[0]);
+        
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            return res.sendFile(filePath);
+        } else if (fs.existsSync(path.join(siteDir, 'index.html'))) {
+            // Fallback naar index.html voor SPA-achtig gedrag
+            return res.sendFile(path.join(siteDir, 'index.html'));
+        }
+        return next();
+    }
+
+    // Voor native sites: Proxy naar de Vite dev server
+    const previewPort = siteCtrl.getSitePort(siteId, siteDir);
+    
+    return createProxyMiddleware({
+        target: `http://127.0.0.1:${previewPort}`,
+        changeOrigin: true,
+        pathRewrite: {
+            [`^/previews/${siteId}`]: `/${siteId}`,
+        },
+        ws: true,
+        xfwd: true,
+        logLevel: 'error',
+        onProxyRes: (proxyRes, req, res) => {
+            // Herschrijf redirects
+            if (proxyRes.headers['location']) {
+                if (proxyRes.headers['location'].startsWith(`/${siteId}`)) {
+                    proxyRes.headers['location'] = `/previews/${siteId}` + proxyRes.headers['location'].substring(siteId.length + 1);
+                }
+            }
+        }
+    })(req, res, next);
 });
 
 app.listen(port, () => {

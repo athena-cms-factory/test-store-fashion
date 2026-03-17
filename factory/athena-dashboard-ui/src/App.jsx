@@ -36,7 +36,7 @@ function App() {
 
   useEffect(() => {
     refreshData()
-    const interval = setInterval(refreshServers, 5000)
+    const interval = setInterval(refreshServers, 15000)
     return () => clearInterval(interval)
   }, [])
 

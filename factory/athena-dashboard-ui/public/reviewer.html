@@ -231,12 +231,13 @@
             document.getElementById('open-dock-btn').classList.add('hidden');
             document.getElementById('external-btn').classList.add('hidden');
 
-            // 🔱 v8.8 Intelligent Loading
+            // 🔱 v8.8 Intelligent Loading (via API Proxy on 5000)
             if (site.isExternal) {
-                // Voor externe sites gebruiken we direct de statische URL van de API
-                console.log("📂 Loading external static site:", site.localUrl);
+                // Voor externe sites gebruiken we de API proxy route
+                const proxyUrl = `${API_BASE}/previews/${site.id}/`;
+                console.log("📂 Loading external static site via proxy:", proxyUrl);
                 document.getElementById('site-status-container').classList.add('hidden');
-                showReady(site.localUrl);
+                showReady(proxyUrl);
                 return;
             }
 

@@ -39,7 +39,6 @@ async function syncRegistry() {
 
     const scanDir = (dir, isExternal) => {
         if (!fs.existsSync(dir)) return;
-        const dirName = path.basename(dir);
         const projects = fs.readdirSync(dir).filter(f => 
             fs.statSync(path.join(dir, f)).isDirectory() && !f.startsWith('.')
         );
@@ -59,30 +58,27 @@ async function syncRegistry() {
                 try { configData = JSON.parse(fs.readFileSync(configPath, 'utf8')); } catch (e) {}
             }
 
-            // Native sites hebben een eigen poort voor de dev-server
-            // Externe sites worden statisch geserveerd door de API op 5000
-            const port = portMap[project] || (isExternal ? 5000 : 5000);
-            
-            // localUrl mapping
-            // Native: direct naar de dev-server poort
-            // External: via de API poort naar de juiste subfolder
-            const localUrl = isExternal 
-                ? `http://localhost:5000/${dirName}/${project}/` 
-                : `http://localhost:${port}/${project}/`;
+            // 🔱 v8.8 Logic: 
+            // Externe sites hebben GEEN eigen server en MOETEN via de API (5000)
+            // Native sites hebben hun eigen dev-server poort.
+            const port = isExternal ? 5000 : (portMap[project] || 5000);
+            const localUrl = `http://localhost:${port}/${project}/`;
 
             registry.push({
                 id: project,
                 name: configData.projectName || project,
+                isNative: !isExternal,
                 isExternal: isExternal,
-                siteType: configData.siteType || (isExternal ? 'external' : 'unknown'),
+                siteType: configData.siteType || (isExternal ? 'static-legacy' : 'unknown'),
                 generatedAt: configData.generatedAt || null,
                 governance_mode: configData.governance_mode || 'dev-mode',
                 repoUrl: deployData.repoUrl || null,
                 liveUrl: deployData.liveUrl || null,
                 localUrl: localUrl,
-                port: isExternal ? null : port, // We tonen geen poort voor externe sites in UI
+                port: isExternal ? null : port,
                 status: deployData.status || 'local'
             });
+
         }
     };
 

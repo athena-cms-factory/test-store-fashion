@@ -74,7 +74,9 @@ export default defineConfig({
   ],
   base: './',
   server: {
-    port: 6041,
+    cors: true,
+    port: parseInt(process.env.PORT) || 6041,
+      allowedHosts: true,
     host: true,
     fs: { allow: ['..'] }
   }

@@ -412,10 +412,25 @@ export class AthenaDataManager {
                     rows = [headers];
                     jsonData.forEach(item => {
                         rows.push(headers.map(h => {
-                            const val = item[h];
-                            if (val && typeof val === 'object' && !Array.isArray(val)) {
-                                return val.text || val.title || val.label || JSON.stringify(val);
+                            let val = item[h];
+                            
+                            // 🔱 v8.8 Ultra-Robust Primitive Extraction for Google Sheets
+                            if (val !== null && typeof val === 'object') {
+                                // Als het een bekend CMS object is, pak de tekst
+                                if (!Array.isArray(val)) {
+                                    if (val.text !== undefined) val = val.text;
+                                    else if (val.title !== undefined) val = val.title;
+                                    else if (val.label !== undefined) val = val.label;
+                                    else if (val.value !== undefined) val = val.value;
+                                    else val = JSON.stringify(val); // Fallback voor complexe objecten
+                                } else {
+                                    // Voor arrays: comma separated string of JSON
+                                    val = val.every(i => typeof i === 'string' || typeof i === 'number') 
+                                        ? val.join(', ') 
+                                        : JSON.stringify(val);
+                                }
                             }
+                            
                             return val === null || val === undefined ? "" : val;
                         }));
                     });
