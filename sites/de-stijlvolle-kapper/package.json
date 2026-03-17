@@ -1,5 +1,5 @@
 {
-  "name": "dirk-de-witte-kappers",
+  "name": "de-stijlvolle-kapper",
   "type": "module",
   "scripts": {
     "fetch-data": "node fetch-data.js",

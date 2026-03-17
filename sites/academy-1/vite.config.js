@@ -17,15 +17,15 @@ if (fs.existsSync(pluginPath)) {
 }
 
 export default defineConfig({
-  base: '/bakkerij-de-graankorrel/',
+  base: '/academy-1/',
   plugins: [
     react(),
     tailwindcss(),
     athenaEditorPlugin ? athenaEditorPlugin() : null
   ].filter(Boolean),
-  server: {
+  server: { allowedHosts: true, cors: true,
     host: true,
-    port: parseInt(process.env.PORT) || 5007,
+    port: parseInt(process.env.PORT) || 5006,
     allowedHosts: true,
     cors: true
   }

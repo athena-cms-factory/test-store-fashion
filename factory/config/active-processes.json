@@ -1,9 +1,16 @@
 {
-  "5008": {
-    "pid": 16989,
-    "id": "de-stijlvolle-kapper",
+  "5002": {
+    "pid": 17821,
+    "id": "athena-dock",
+    "type": "dock",
+    "startTime": "2026-03-17T19:30:29.983Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/athena-dock-dock.log"
+  },
+  "5007": {
+    "pid": 19203,
+    "id": "bakkerij-de-graankorrel",
     "type": "preview",
-    "startTime": "2026-03-17T18:52:17.406Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/de-stijlvolle-kapper-preview.log"
+    "startTime": "2026-03-17T19:30:53.418Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/bakkerij-de-graankorrel-preview.log"
   }
 }

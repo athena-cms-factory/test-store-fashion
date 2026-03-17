@@ -1,4 +1,4 @@
-# 📘 Handleiding: dirk-de-witte-kappers
+# 📘 Handleiding: de-stijlvolle-kapper
 
 **Type Website:** kapper
 **Status:** Live & Beheerbaar via Google Sheets
