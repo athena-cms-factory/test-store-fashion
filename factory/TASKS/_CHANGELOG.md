@@ -1,5 +1,14 @@
 # Changelog - Athena CMS Factory
 
+## [8.8.0] - 2026-03-17
+### 🔱 CHROMEBOOK OPTIMIZATION & UNIFIED PREVIEW HUB
+- **Unified Preview Hub (Port 5000)**: De API fungeert nu als een centrale proxy voor alle sites (Native & External). Dit omzeilt CORS-fouten en poort-blokkades op de Chromebook door alles via één origin te serveren (`/previews/:id/`).
+- **Dynamic Port Management**: Introductie van een gesynchroniseerd poort-register (`site-ports.json`). Elke site heeft nu een unieke, gereserveerde poort (5100-6500) om "Port Collision Cascades" te voorkomen.
+- **CPU Caching & Optimization**: Systeemstatus en schijfscans worden nu agressief gecached (30-60s). Dit verlaagt de belasting van de `athena-api` op de Chromebook van 300% naar <1%.
+- **Athenify Vite-React Protocol (v1)**: Nieuwe procedure voor het promoveren van legacy Vite-apps naar de Native Athena standaard (modulaire secties, v33 Sync Bridge, Visual Editor bindings).
+- **Google Sheets Robustness**: De synchronisatie-engine flattent nu automatisch complexe objecten naar strings om `struct_value` API-errors te voorkomen.
+- **Copyright Protection & Renaming**: De kapper-site is hernoemd naar `de-stijlvolle-kapper` om copyright-issues te vermijden, inclusief automatische herschrijving van alle broncodes en metadata.
+
 ## [8.8.3] - 2026-03-17
 ### 🌐 HYBRID SITE MANAGEMENT & REVIEWER INTELLIGENCE
 - **Intelligent Reviewer UI**: De Reviewer herkent nu automatisch `isExternal` sites en laadt deze direct in via de statische API-poort (5000) zonder een ontwikkelserver op te starten.

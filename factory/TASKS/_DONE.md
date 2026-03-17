@@ -1,5 +1,15 @@
 # ✅ DONE - Athena CMS Factory
 
+## [2026-03-17] v8.8.0 - Chromebook Optimization & Unified Hub
+- [x] **Unified Preview Proxy**: Implementatie van `http-proxy-middleware` in de API voor centrale site-access.
+- [x] **Dynamic Port Registry**: Synchronisatie tussen Dock, Factory en centraal Port Manager register voltooid.
+- [x] **CPU Stress Fix**: Caching van `df -h` en `du -sm` aanroepen in de backend (300% -> <1% load).
+- [x] **Universal Site Patch**: Alle 45+ sites geüpdatet met `allowedHosts`, `cors: true` en `process.env.PORT`.
+- [x] **Athenification**: `academy-1`, `bakkerij-de-graankorrel` en `de-stijlvolle-kapper` gepromoveerd naar Native.
+- [x] **Copyright Renaming**: Volledige sanitatie van `dirk-de-witte-kappers` naar `de-stijlvolle-kapper`.
+- [x] **GitHub Tab Fix**: Foutafhandeling toegevoegd aan repository-listing; UI crash verholpen.
+- [x] **Live Counter Fix**: Dashboard tellers gesynchroniseerd met werkelijke `deployment.json` data.
+
 ## [2026-03-08] v8.0.7 - Component Excellence Upgrade
 - [x] **EditableText & EditableLink Upgrade (v8.4.2)**: Uitgebreide styling (Font Family, Shadows, Padding) toegevoegd en uitgerold naar alle 43 componenten.
 - [x] **Ironclad Rendering Safety**: Fix voor "Objects as React child" error via geforceerde string-extractie.

@@ -1,6 +1,14 @@
 # 📋 TODO - Athena CMS (Master Plan)
 
+## 🔱 v8.8 Maintenance & Performance (Current Focus)
+- [ ] **Unified Asset Handling**: Verplaats alle resterende `sites-external` assets naar een centrale CDN-achtige structuur binnen de monorepo.
+- [ ] **Port Manager Dashboard**: Bouw een visuele interface in de "Servers" tab om het poort-register direct te bewerken.
+- [ ] **Auto-Athenify v2**: Breid het protocol uit om ook puur statische HTML sites (zonder Vite) automatisch te converteren.
+- [ ] **Disk Usage Visualizer**: Voeg een cirkel-grafiek toe aan de "Opslag" tab op basis van de nieuwe gecachete data.
+
 ## 🐛 Critical Bugfix & Polish (Urgent)
+- [x] **GitHub Tab Crash**: Fix `repos.filter` TypeError bij ontbrekende config. (Completed)
+- [x] **Live Links Missing**: Herstel inladen van `deployment.json` in SiteController. (Completed)
 - [ ] **Dock Design Sync**: Zorg dat `DesignControls` (zijbalk) bij het opstarten ook de kleuren uit `style_config.json` inlaadt (nu staan ze op zwart na reload).
 - [ ] **Modal Context Awareness**: Verbeter de `SITE_SYNC_RESPONSE` zodat de modal het verschil herkent tussen "geen kleur" (volg globaal) en "zwart".
 - [ ] **Button Navigation Fix (De Schaar)**: Onderzoek waarom CTA en Navbar knoppen (behalve Home/Contact) niet scrollen naar de juiste sectie.
