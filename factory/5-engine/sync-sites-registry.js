@@ -13,7 +13,8 @@ const __dirname = path.dirname(__filename);
 const FACTORY_ROOT = path.resolve(__dirname, '../..');
 const SITES_DIR = path.join(FACTORY_ROOT, 'sites');
 const OUTPUT_FILE = path.join(FACTORY_ROOT, 'dock/public/sites.json');
-const PORTS_FILE = path.join(FACTORY_ROOT, 'factory/config/site-ports.json');
+const PORTS_FILE = path.join(FACTORY_ROOT, 'port-manager/registry.json');
+const LEGACY_PORTS_FILE = path.join(FACTORY_ROOT, 'factory/config/site-ports.json');
 
 async function syncRegistry() {
     console.log("🔍 Scanning sites for deployment status...");
@@ -27,10 +28,27 @@ async function syncRegistry() {
         fs.statSync(path.join(SITES_DIR, f)).isDirectory() && !f.startsWith('.')
     );
 
-    // Load existing ports to maintain consistency
+    // Load ports from Central Registry (via symlink) or Legacy File
     let portMap = {};
+    
+    // 1. Try Central Registry first
     if (fs.existsSync(PORTS_FILE)) {
-        try { portMap = JSON.parse(fs.readFileSync(PORTS_FILE, 'utf8')); } catch (e) {}
+        try { 
+            const registry = JSON.parse(fs.readFileSync(PORTS_FILE, 'utf8'));
+            if (registry.services) {
+                Object.keys(registry.services).forEach(key => {
+                    portMap[key] = registry.services[key].port;
+                });
+            }
+        } catch (e) { console.warn("⚠️ Could not parse central registry, falling back."); }
+    }
+    
+    // 2. Fallback/Merge with Legacy ports if they exist
+    if (fs.existsSync(LEGACY_PORTS_FILE)) {
+        try { 
+            const legacyMap = JSON.parse(fs.readFileSync(LEGACY_PORTS_FILE, 'utf8'));
+            portMap = { ...legacyMap, ...portMap }; // Central registry takes precedence
+        } catch (e) {}
     }
 
     const registry = [];

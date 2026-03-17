@@ -448,11 +448,28 @@ export class ProjectGenerator {
         const viteTpl = fs.readFileSync(viteTplPath, 'utf8');
 
         // Gebruik vaste poorten uit de centrale registratie indien beschikbaar
-        const registryPath = path.join(__dirname, '../../config/site-ports.json');
+        const registryPath = path.join(__dirname, '../../../port-manager/registry.json');
+        const legacyRegistryPath = path.join(__dirname, '../../config/site-ports.json');
         let portMap = {};
+
+        // 1. Try Central Registry first
         if (fs.existsSync(registryPath)) {
-            try { portMap = JSON.parse(fs.readFileSync(registryPath, 'utf8')); }
-            catch (e) { console.warn("Could not read site-ports.json", e.message); }
+            try { 
+                const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+                if (registry.services) {
+                    Object.keys(registry.services).forEach(key => {
+                        portMap[key] = registry.services[key].port;
+                    });
+                }
+            } catch (e) { console.warn("Could not read central registry", e.message); }
+        }
+
+        // 2. Fallback to Legacy Registry
+        if (fs.existsSync(legacyRegistryPath)) {
+            try { 
+                const legacyMap = JSON.parse(fs.readFileSync(legacyRegistryPath, 'utf8'));
+                portMap = { ...legacyMap, ...portMap };
+            } catch (e) { console.warn("Could not read legacy site-ports.json", e.message); }
         }
 
         let port = portMap[this.safeName];
@@ -462,10 +479,10 @@ export class ProjectGenerator {
                 port = 5001 + Math.floor(Math.random() * 1499);
             } while (port === 6000 || Object.values(portMap).includes(port));
 
-            // Sla de nieuwe poort direct op in het register
+            // Sla de nieuwe poort op in het legacy register (veiligheidshalve)
             portMap[this.safeName] = port;
             try {
-                fs.writeFileSync(registryPath, JSON.stringify(portMap, null, 4));
+                fs.writeFileSync(legacyRegistryPath, JSON.stringify(portMap, null, 4));
             } catch (e) {
                 console.warn("Could not update site-ports.json", e.message);
             }
