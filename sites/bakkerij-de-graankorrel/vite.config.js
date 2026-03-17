@@ -7,20 +7,21 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// De editor plugin is alleen lokaal beschikbaar tijdens development
-let athenaEditorPlugin = null;
-const pluginPath = path.resolve(__dirname, '../../factory-engine/lib/vite-plugin-athena-editor.js');
-
-if (fs.existsSync(pluginPath)) {
-  const module = await import(`file://${pluginPath}`);
-  athenaEditorPlugin = module.default;
-}
+// v8.8 Universal Base URL Detection
+const isProduction = process.env.NODE_ENV === 'production';
+const siteName = path.basename(__dirname);
 
 export default defineConfig({
-  base: '/ath-bakkerij-de-graankorrel/', 
+  // In development (Dashboard Reviewer) gebruiken we root of de ath- prefix
+  // In production (GitHub Pages) gebruiken we de site-naam
+  base: isProduction ? `/${siteName}/` : './', 
   plugins: [
     react(),
     tailwindcss(),
-    athenaEditorPlugin ? athenaEditorPlugin() : null
-  ].filter(Boolean),
+  ],
+  server: {
+    port: 5173,
+    strictPort: false,
+    host: true
+  }
 })
