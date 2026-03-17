@@ -29,6 +29,18 @@ The primary development machine is a Chromebook with limited resources (16GB RAM
 
 ## 🏛️ Project Architecture & Tooling Stack
 Athena v8.1 is an automated factory featuring the v33 Sync Bridge and Modular Component Architecture, built as a monorepo (`athena-x`).
+
+### 📦 Modular Data Architecture Standard (1-on-1 Rule)
+To ensure maximum clarity and safety, every site follows a strict mapping:
+1.  **Content Tabs (Visible to Client)**: Every UI Section (e.g., `header`, `hero`, `voordelen`, `footer`) has its own dedicated JSON file and a visible, human-readable tab in Google Sheets.
+2.  **Config Tabs (Hidden from Client)**: All technical configurations MUST be prefixed with an underscore (`_`) in Google Sheets to be hidden from the client.
+    -   `_site_settings`: Global identity (Name, Logo, Header/Footer heights).
+    -   `_style_config`: Colors, Fonts, Spacing.
+    -   `_links_config`: Diverted URL mapping.
+    -   `_section_order`: The sequence of sections on the page.
+    -   `_layout_settings`: Grid and spacing logic.
+    -   `_system`: Internal factory metadata.
+
 *   **Stack**: React 19 + Vite + Tailwind v4.
 *   **Two-Track Strategy**:
     *   **Docked**: Lightweight, editor-less sites controlled by Athena Dock.
