@@ -1,6 +1,6 @@
 /**
  * @file sync-sites-registry.js
- * @description Scans all projects in sites/ and updates dock/public/sites.json with their current deployment status.
+ * @description Scans all projects in sites/ and sites-external/ and updates dock/public/sites.json.
  */
 
 import fs from 'fs';
@@ -12,6 +12,7 @@ const __dirname = path.dirname(__filename);
 
 const FACTORY_ROOT = path.resolve(__dirname, '../..');
 const SITES_DIR = path.join(FACTORY_ROOT, 'sites');
+const EXTERNAL_SITES_DIR = path.join(FACTORY_ROOT, 'sites-external');
 const OUTPUT_FILE = path.join(FACTORY_ROOT, 'dock/public/sites.json');
 const PORTS_FILE = path.join(FACTORY_ROOT, 'port-manager/registry.json');
 const LEGACY_PORTS_FILE = path.join(FACTORY_ROOT, 'factory/config/site-ports.json');
@@ -19,74 +20,76 @@ const LEGACY_PORTS_FILE = path.join(FACTORY_ROOT, 'factory/config/site-ports.jso
 async function syncRegistry() {
     console.log("🔍 Scanning sites for deployment status...");
     
-    if (!fs.existsSync(SITES_DIR)) {
-        console.error("❌ Sites directory not found.");
-        return;
-    }
-
-    const projects = fs.readdirSync(SITES_DIR).filter(f => 
-        fs.statSync(path.join(SITES_DIR, f)).isDirectory() && !f.startsWith('.')
-    );
-
-    // Load ports from Central Registry (via symlink) or Legacy File
+    const registry = [];
     let portMap = {};
     
-    // 1. Try Central Registry first
+    // Load ports logic
     if (fs.existsSync(PORTS_FILE)) {
         try { 
-            const registry = JSON.parse(fs.readFileSync(PORTS_FILE, 'utf8'));
-            if (registry.services) {
-                Object.keys(registry.services).forEach(key => {
-                    portMap[key] = registry.services[key].port;
-                });
-            }
-        } catch (e) { console.warn("⚠️ Could not parse central registry, falling back."); }
+            const reg = JSON.parse(fs.readFileSync(PORTS_FILE, 'utf8'));
+            if (reg.services) Object.keys(reg.services).forEach(k => { portMap[k] = reg.services[k].port; });
+        } catch (e) {}
     }
-    
-    // 2. Fallback/Merge with Legacy ports if they exist
     if (fs.existsSync(LEGACY_PORTS_FILE)) {
         try { 
             const legacyMap = JSON.parse(fs.readFileSync(LEGACY_PORTS_FILE, 'utf8'));
-            portMap = { ...legacyMap, ...portMap }; // Central registry takes precedence
+            portMap = { ...legacyMap, ...portMap };
         } catch (e) {}
     }
 
-    const registry = [];
+    const scanDir = (dir, isExternal) => {
+        if (!fs.existsSync(dir)) return;
+        const dirName = path.basename(dir);
+        const projects = fs.readdirSync(dir).filter(f => 
+            fs.statSync(path.join(dir, f)).isDirectory() && !f.startsWith('.')
+        );
 
-    for (const project of projects) {
-        const projectPath = path.join(SITES_DIR, project);
-        const deployPath = path.join(projectPath, 'project-settings/deployment.json');
-        const configPath = path.join(projectPath, 'athena-config.json');
-        
-        let deployData = {};
-        let configData = {};
-        
-        if (fs.existsSync(deployPath)) {
-            try { deployData = JSON.parse(fs.readFileSync(deployPath, 'utf8')); } catch (e) {}
+        for (const project of projects) {
+            const projectPath = path.join(dir, project);
+            const deployPath = path.join(projectPath, 'project-settings/deployment.json');
+            const configPath = path.join(projectPath, 'athena-config.json');
+            
+            let deployData = {};
+            let configData = {};
+            
+            if (fs.existsSync(deployPath)) {
+                try { deployData = JSON.parse(fs.readFileSync(deployPath, 'utf8')); } catch (e) {}
+            }
+            if (fs.existsSync(configPath)) {
+                try { configData = JSON.parse(fs.readFileSync(configPath, 'utf8')); } catch (e) {}
+            }
+
+            // Native sites hebben een eigen poort voor de dev-server
+            // Externe sites worden statisch geserveerd door de API op 5000
+            const port = portMap[project] || (isExternal ? 5000 : 5000);
+            
+            // localUrl mapping
+            // Native: direct naar de dev-server poort
+            // External: via de API poort naar de juiste subfolder
+            const localUrl = isExternal 
+                ? `http://localhost:5000/${dirName}/${project}/` 
+                : `http://localhost:${port}/${project}/`;
+
+            registry.push({
+                id: project,
+                name: configData.projectName || project,
+                isExternal: isExternal,
+                siteType: configData.siteType || (isExternal ? 'external' : 'unknown'),
+                generatedAt: configData.generatedAt || null,
+                governance_mode: configData.governance_mode || 'dev-mode',
+                repoUrl: deployData.repoUrl || null,
+                liveUrl: deployData.liveUrl || null,
+                localUrl: localUrl,
+                port: isExternal ? null : port, // We tonen geen poort voor externe sites in UI
+                status: deployData.status || 'local'
+            });
         }
-        
-        if (fs.existsSync(configPath)) {
-            try { configData = JSON.parse(fs.readFileSync(configPath, 'utf8')); } catch (e) {}
-        }
+    };
 
-        const port = portMap[project] || 5000;
-        const localUrl = `http://localhost:${port}/${project}/`;
+    scanDir(SITES_DIR, false);
+    scanDir(EXTERNAL_SITES_DIR, true);
 
-        registry.push({
-            id: project,
-            name: configData.projectName || project,
-            siteType: configData.siteType || 'unknown',
-            generatedAt: configData.generatedAt || null,
-            governance_mode: configData.governance_mode || 'dev-mode',
-            repoUrl: deployData.repoUrl || null,
-            liveUrl: deployData.liveUrl || null,
-            localUrl: localUrl,
-            port: port,
-            status: deployData.status || 'local'
-        });
-    }
-
-    // Sort: live first, then alphabetical
+    // Sorteren: live eerst, dan alfabetisch
     registry.sort((a, b) => {
         if (a.liveUrl && !b.liveUrl) return -1;
         if (!a.liveUrl && b.liveUrl) return 1;

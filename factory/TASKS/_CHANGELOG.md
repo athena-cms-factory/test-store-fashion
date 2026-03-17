@@ -1,5 +1,12 @@
 # Changelog - Athena CMS Factory
 
+## [8.8.3] - 2026-03-17
+### 🌐 HYBRID SITE MANAGEMENT & REVIEWER INTELLIGENCE
+- **Intelligent Reviewer UI**: De Reviewer herkent nu automatisch `isExternal` sites en laadt deze direct in via de statische API-poort (5000) zonder een ontwikkelserver op te starten.
+- **Dual-Path Registry Sync**: De registry scanner doorzoekt nu zowel `sites/` als `sites-external/` en markeert externe sites automatisch met een `isExternal` vlag.
+- **Duplicate Cleanup**: Alle externe sites zijn verwijderd uit de native `sites/` map om poort-conflicten en verwarring in het Dashboard te voorkomen.
+- **Visual External Label**: Externe sites in de Reviewer lijst zijn nu gemarkeerd met een "Ext" label.
+
 ## [8.8.2] - 2026-03-17
 ### 🚀 MODULAR DATA & SMARTICON EVOLUTION
 - **Modular Data Architecture (1-on-1 Rule)**: Harde scheiding tussen Content (zichtbaar voor klant) en Config (verborgen via `_` prefix in Sheets).
