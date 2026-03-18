@@ -5,15 +5,15 @@ const HeroSection = ({ items: data, sectionName, siteSettings }) => {
   const hero = data[0];
   const settings = siteSettings || {};
 
-  const heroTitle = hero.titel || hero.hero_header || settings.site_name || 'Athena Hub';
-  const heroSubtitle = hero.ondertitel || hero.introductie || hero.hero_sub_tekst || '';
-  const imgKey = Object.keys(hero).find(k => k.toLowerCase().includes('afbeelding') || k.toLowerCase().includes('foto')) || 'hero_afbeelding';
-  const rawImg = hero[imgKey] || '';
-  const imgSrc = (rawImg || "").startsWith('http') ? rawImg : `${import.meta.env.BASE_URL}images/${rawImg || 'placeholder.jpg'}`;
+  // v8.8 Hub-specifieke herstelactie
+  const heroTitle = hero.title || settings.site_name || 'Athena Hub';
+  const heroSubtitle = hero.subtitle || settings.tagline || '';
+  const rawImg = hero.image || 'hero-athenahub-1-1770366162431.webp';
+  const imgSrc = (rawImg || "").startsWith('http') ? rawImg : `${import.meta.env.BASE_URL}images/${rawImg}`;
 
   const handleScroll = (e) => {
     if (e.shiftKey) return;
-    const url = hero.cta_url || "#showcase";
+    const url = (hero.cta && hero.cta.url) ? hero.cta.url : "#showcase";
     if ((url || "").startsWith('#')) {
       e.preventDefault();
       const target = document.getElementById(url.substring(1));
@@ -28,18 +28,18 @@ const HeroSection = ({ items: data, sectionName, siteSettings }) => {
           src={imgSrc} 
           className="w-full h-full object-cover object-top" 
           data-dock-type="media" 
-          data-dock-bind={`${sectionName}.0.${imgKey}`} 
+          data-dock-bind={`${sectionName}.0.image`} 
         />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/90 z-10"></div>
       </div>
 
       <div className="relative z-20 text-center px-6 max-w-5xl">
         <h1 className="text-6xl md:text-9xl font-serif font-black text-white mb-8 leading-tight drop-shadow-2xl">
-          <span data-dock-type="text" data-dock-bind={`${sectionName}.0.titel`}>{heroTitle}</span>
+          <span data-dock-type="text" data-dock-bind={`${sectionName}.0.title`}>{heroTitle}</span>
         </h1>
         
         <p className="text-xl md:text-3xl text-white/80 max-w-3xl mx-auto leading-relaxed drop-shadow-lg font-light italic mb-12">
-          <span data-dock-type="text" data-dock-bind={`${sectionName}.0.ondertitel`}>{heroSubtitle}</span>
+          <span data-dock-type="text" data-dock-bind={`${sectionName}.0.subtitle`}>{heroSubtitle}</span>
         </p>
 
         <div className="flex flex-wrap justify-center gap-6">
@@ -47,9 +47,9 @@ const HeroSection = ({ items: data, sectionName, siteSettings }) => {
             onClick={handleScroll} 
             className="bg-accent text-primary px-10 py-4 rounded-full text-xl font-bold shadow-2xl hover:scale-105 transition-all"
             data-dock-type="link" 
-            data-dock-bind={`${sectionName}.0.cta_label`}
+            data-dock-bind={`${sectionName}.0.cta_text`}
           >
-            {hero.cta_label || "Ontdek Meer"}
+            {hero.cta_text || (hero.cta && hero.cta.label) || "Ontdek Meer"}
           </button>
         </div>
       </div>

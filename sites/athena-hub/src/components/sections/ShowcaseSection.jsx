@@ -3,13 +3,6 @@ import React from 'react';
 const ShowcaseSection = ({ items: data, sectionName }) => {
   if (!data || data.length === 0) return null;
 
-  // We detecteren de keys op basis van de eerste site in de lijst
-  const firstItem = data[0];
-  const titleKey = Object.keys(firstItem).find(k => k.toLowerCase().includes('naam') || k.toLowerCase().includes('titel')) || 'naam';
-  const imgKey = Object.keys(firstItem).find(k => k.toLowerCase().includes('afbeelding') || k.toLowerCase().includes('foto')) || 'foto_url';
-  const textKey = Object.keys(firstItem).find(k => k.toLowerCase().includes('beschrijving') || k.toLowerCase().includes('omschrijving') || k.toLowerCase().includes('tekst')) || 'omschrijving';
-  const urlKey = Object.keys(firstItem).find(k => k.toLowerCase().includes('url') || k.toLowerCase().includes('link')) || 'website_url';
-
   return (
     <section id="showcase" className="py-32 bg-white overflow-hidden" data-dock-section={sectionName}>
       <div className="container mx-auto px-6">
@@ -27,7 +20,10 @@ const ShowcaseSection = ({ items: data, sectionName }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {data.map((item, index) => {
-            const hasUrl = item[urlKey] && item[urlKey] !== '#';
+            const url = (item.link && item.link.url) ? item.link.url : "#";
+            const hasUrl = url !== '#';
+            const rawImg = item.image || 'placeholder.jpg';
+            const imgSrc = rawImg.startsWith('http') ? rawImg : `${import.meta.env.BASE_URL}images/${rawImg}`;
             
             return (
               <div 
@@ -35,17 +31,17 @@ const ShowcaseSection = ({ items: data, sectionName }) => {
                 className="group flex flex-col bg-slate-50 rounded-[40px] overflow-hidden border border-slate-100 hover:border-accent/20 transition-all duration-700 hover:shadow-2xl hover:shadow-accent/5"
               >
                 <a 
-                  href={item[urlKey] || "#"} 
+                  href={url} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="aspect-[16/10] overflow-hidden block relative"
                   onClick={(e) => { if (e.shiftKey) e.preventDefault(); }}
                 >
                   <img 
-                    src={(item[imgKey] || "").startsWith('http') ? item[imgKey] : `${import.meta.env.BASE_URL}images/${item[imgKey] || 'placeholder.jpg'}`} 
+                    src={imgSrc} 
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                     data-dock-type="media" 
-                    data-dock-bind={`${sectionName}.${index}.${imgKey}`} 
+                    data-dock-bind={`${sectionName}.${index}.image`} 
                   />
                   <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     <div className="bg-primary/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-tighter shadow-xl">
@@ -57,7 +53,7 @@ const ShowcaseSection = ({ items: data, sectionName }) => {
                 <div className="p-12 flex flex-col flex-grow">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-3xl font-bold text-primary group-hover:text-accent transition-colors">
-                      <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${titleKey}`}>{item[titleKey]}</span>
+                      <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.name`}>{item.name}</span>
                     </h3>
                     {item.category && (
                       <span className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest" data-dock-type="text" data-dock-bind={`${sectionName}.${index}.category`}>{item.category}</span>
@@ -65,18 +61,18 @@ const ShowcaseSection = ({ items: data, sectionName }) => {
                   </div>
 
                   <div className="text-lg leading-relaxed text-slate-600 mb-8 line-clamp-3 font-light italic">
-                    <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${textKey}`}>{item[textKey]}</span>
+                    <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.description`}>{item.description}</span>
                   </div>
 
                   <div className="mt-auto pt-6 border-t border-slate-50 flex justify-between items-center">
                     {hasUrl && (
                       <a 
-                        href={item[urlKey]} 
+                        href={url} 
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="text-accent font-bold hover:translate-x-2 transition-transform flex items-center gap-2"
                         data-dock-type="link"
-                        data-dock-bind={`${sectionName}.${index}.${urlKey}`}
+                        data-dock-bind={`${sectionName}.${index}.link.label`}
                       >
                         Bezoek Website <i className="fa-solid fa-arrow-right-long"></i>
                       </a>

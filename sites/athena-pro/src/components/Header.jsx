@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Header({ siteSettings = {} }) {
+function Header({ siteSettings = {}, data }) {
   const settings = Array.isArray(siteSettings) ? (siteSettings[0] || {}) : (siteSettings || {});
   const siteName = settings.site_name || 'Athena CMS Factory';
-  
-  // ALTIJD een afbeelding forceren. Als site_logo_image leeg is, gebruik het icoon.
-  // Dit voorkomt dat EditableMedia een <div> fallback rendert, wat de editor in de war brengt.
   const displayLogo = settings.site_logo_image || "athena-icon.svg";
+
+  const handleScroll = (e, targetId) => {
+    if (e.shiftKey) return;
+    const target = document.getElementById(targetId);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <nav 
@@ -16,19 +22,19 @@ function Header({ siteSettings = {} }) {
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo & Identity */}
-        <Link to="/" className="flex items-center gap-4 group">
+        <Link to="/" onClick={(e) => window.scrollTo({top: 0, behavior: 'smooth'})} className="flex items-center gap-4 group">
           
           <div className="relative w-12 h-12 overflow-hidden transition-transform duration-500">
-             <img src={displayLogo} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="site_settings.0.site_logo_image" />
+             <img src={displayLogo} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="_site_settings.0.site_logo_image" />
           </div>
           
           <div className="flex flex-col">
             <span className="text-2xl font-serif font-black tracking-tight text-primary leading-none mb-1">
-              <span data-dock-type="text" data-dock-bind="site_settings.0.site_name">{siteName}</span>
+              <span data-dock-type="text" data-dock-bind="_site_settings.0.site_name">{siteName}</span>
             </span>
             {settings.tagline && (
               <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-bold opacity-80">
-                <span data-dock-type="text" data-dock-bind="site_settings.0.tagline">{settings.tagline}</span>
+                <span data-dock-type="text" data-dock-bind="_site_settings.0.tagline">{settings.tagline}</span>
               </span>
             )}
           </div>
@@ -36,9 +42,12 @@ function Header({ siteSettings = {} }) {
 
         {/* Action Menu */}
         <div className="hidden md:flex items-center gap-8">
-            <a href="#contact" className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-accent transition-colors">
+            <button 
+              onClick={(e) => handleScroll(e, 'contact')} 
+              className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-accent transition-all"
+            >
               Start Project
-            </a>
+            </button>
         </div>
       </div>
     </nav>
