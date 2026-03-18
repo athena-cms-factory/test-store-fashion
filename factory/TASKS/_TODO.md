@@ -1,5 +1,7 @@
 # 📋 TODO - Athena CMS (Master Plan)
 
+1. gentse-dakwerken etc... athenifyen (of toch proberen)
+
 ## 🔱 v8.8 Maintenance & Performance (Current Focus)
 - [ ] **Unified Asset Handling**: Verplaats alle resterende `sites-external` assets naar een centrale CDN-achtige structuur binnen de monorepo.
 - [ ] **Port Manager Dashboard**: Bouw een visuele interface in de "Servers" tab om het poort-register direct te bewerken.
@@ -9,9 +11,9 @@
 ## 🐛 Critical Bugfix & Polish (Urgent)
 - [x] **GitHub Tab Crash**: Fix `repos.filter` TypeError bij ontbrekende config. (Completed)
 - [x] **Live Links Missing**: Herstel inladen van `deployment.json` in SiteController. (Completed)
-- [ ] **Dock Design Sync**: Zorg dat `DesignControls` (zijbalk) bij het opstarten ook de kleuren uit `style_config.json` inlaadt (nu staan ze op zwart na reload).
+- [x] **Dock Design Sync**: Zorg dat `DesignControls` (zijbalk) bij het opstarten ook de kleuren uit `style_config.json` inlaadt (nu staan ze op zwart na reload). (Completed)
 - [ ] **Modal Context Awareness**: Verbeter de `SITE_SYNC_RESPONSE` zodat de modal het verschil herkent tussen "geen kleur" (volg globaal) en "zwart".
-- [ ] **Button Navigation Fix (De Schaar)**: Onderzoek waarom CTA en Navbar knoppen (behalve Home/Contact) niet scrollen naar de juiste sectie.
+- [x] **Button Navigation Fix (De Schaar)**: Onderzoek waarom CTA en Navbar knoppen (behalve Home/Contact) niet scrollen naar de juiste sectie. (Completed)
 - [ ] **One-Step-Behind Prevention**: Finale controle op alle sliders om de 1-frame-delay volledig te elimineren in alle browsers.
 - [ ] **System-Wide Quality Audit**: Perform architectural scan and identify technical debt.
 - [ ] **Onboarding Validation**: Execute first live "Digital Strategist" onboarding session via CLI/Dashboard.

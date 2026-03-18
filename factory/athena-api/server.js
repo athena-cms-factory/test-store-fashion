@@ -38,6 +38,7 @@ import { generateWithAI } from '../5-engine/core/ai-engine.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '../..');
+const externalDir = path.join(root, 'sites-external');
 console.log(`📂 Resolved Root: ${root}`);
 console.log(`📂 Resolved Input: ${path.join(root, 'input')}`);
 
@@ -89,10 +90,7 @@ const upload = multer({ storage });
 app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-
 // 🔱 v8.8 Intelligent Static Routing for External Sites
-// We koppelen elke externe site aan zijn eigen specifieke route
-const externalDir = path.join(root, 'sites-external');
 if (fs.existsSync(externalDir)) {
     const sites = fs.readdirSync(externalDir).filter(f => fs.statSync(path.join(externalDir, f)).isDirectory());
     sites.forEach(site => {

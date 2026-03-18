@@ -59,6 +59,7 @@ To ensure maximum clarity and safety, every site follows a strict mapping:
 
 ## 🚨 Critical Code Constraints & Guardrails
 - **Human-Readable Data Rule**: Alle veldnamen in Google Sheets en JSON bestanden moeten in het **Nederlands** zijn en een natuurlijke, leesbare naam hebben (bv. `bedrijfsnaam` in plaats van `company_name`, `titel` in plaats van `title`). Dit maximaliseert de gebruiksvriendelijkheid voor de eindklant in de Google Sheets interface.
+- **Shell Commando's**: Gebruik NOOIT interactieve commando's die niet vanzelf afsluiten (zoals `pm2 logs` zonder `--no-daemon`, `top`, of `watch`). Gebruik in plaats daarvan `cat`, `tail -n`, of lees logbestanden direct uit `/home/kareltestspecial/.pm2/logs/`.
 - **Template Literals**: In `5-engine/logic/`, ALWAYS escape dollar signs in generated code: `\$`.
 - **BaseURL**: Use `import.meta.env.BASE_URL` for ALL internal links and assets perfectly support GitHub Pages.
 - **CSS Architecture**: ONLY `index.css` is allowed to `@import "tailwindcss"`. No custom CSS unless standard Tailwind utilities fail.
