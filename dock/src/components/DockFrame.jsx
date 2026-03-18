@@ -142,6 +142,24 @@ const DockFrame = () => {
     return `${cleanBase}/__athena/update-json`;
   };
 
+  // 🔱 v8.8 Robust Section Settings Helper
+  const getSectionSetting = (sectionId, property, defaultValue = null) => {
+    const settings = siteStructure?.data?.section_settings;
+    if (!settings) return defaultValue;
+    
+    if (Array.isArray(settings)) {
+      const found = settings.find(s => s.id === sectionId);
+      return (found && found[property] !== undefined) ? found[property] : defaultValue;
+    }
+    
+    if (typeof settings === 'object') {
+      const found = settings[sectionId];
+      return (found && found[property] !== undefined) ? found[property] : defaultValue;
+    }
+    
+    return defaultValue;
+  };
+
   // Laden van MPA manifest indien beschikbaar
   useEffect(() => {
     if (!selectedSite) {
@@ -372,19 +390,22 @@ const DockFrame = () => {
     saveSectionMove(section, direction);
   };
 
-  const toggleSectionVisibility = (sectionId) => {
+    const toggleSectionVisibility = (sectionId) => {
     console.log(`👁️ Toggling visibility for: ${sectionId}`);
-    const sectionIndex = Array.isArray(siteStructure?.data?.section_settings) 
-      ? siteStructure?.data?.section_settings?.findIndex(s => s.id === sectionId)
-      : -1; // Objecten hebben geen index in de traditionele zin hier
-    if (sectionIndex === -1 || sectionIndex === undefined) {
-      console.warn(`⚠️ Cannot find section index for ${sectionId} in section_settings`);
-      return;
-    }
-    const currentVisible = siteStructure.data.section_settings[sectionIndex].visible !== false;
-    const nextVisible = !currentVisible;
+    const settings = siteStructure?.data?.section_settings;
+    if (!settings) return;
 
-    // Direct feedback via postMessage
+    let nextVisible = true;
+    if (Array.isArray(settings)) {
+      const idx = settings.findIndex(s => s.id === sectionId);
+      if (idx === -1) return;
+      nextVisible = settings[idx].visible === false;
+      saveData('section_settings', idx, 'visible', nextVisible);
+    } else {
+      nextVisible = settings[sectionId]?.visible === false;
+      saveData('section_settings', null, `${sectionId}.visible`, nextVisible);
+    }
+
     if (iframeRef.current) {
       iframeRef.current.contentWindow.postMessage({
         type: 'DOCK_UPDATE_SECTION_VISIBILITY',
@@ -392,19 +413,6 @@ const DockFrame = () => {
         value: nextVisible
       }, '*');
     }
-
-    setSiteStructure(prev => {
-      if (!prev) return prev;
-      const newData = { ...prev.data };
-      const settings = [...(newData.section_settings || [])];
-      if (settings[sectionIndex]) {
-        settings[sectionIndex] = { ...settings[sectionIndex], visible: nextVisible };
-        newData.section_settings = settings;
-      }
-      return { ...prev, data: newData };
-    });
-
-    saveData('section_settings', sectionIndex, 'visible', nextVisible);
   };
 
   const saveSectionMove = async (key, direction) => {
@@ -1104,23 +1112,15 @@ const DockFrame = () => {
                   <div className="flex gap-1 items-center">
                     <button
                       onClick={() => toggleSectionVisibility(section)}
-                      className={`p-1 rounded mr-1 ${
-                        (Array.isArray(siteStructure?.data?.section_settings) 
-                          ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false 
-                          : siteStructure?.data?.section_settings?.[section]?.visible === false) 
-                        ? 'text-slate-300 bg-slate-100 hover:bg-slate-200' : 'text-blue-500 bg-blue-50 hover:bg-blue-100'}`}
-                      title={(Array.isArray(siteStructure?.data?.section_settings) 
-                        ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false 
-                        : siteStructure?.data?.section_settings?.[section]?.visible === false) 
-                        ? "Sectie is verborgen op de site. Klik om te tonen." : "Sectie is zichtbaar op de site. Klik om te verbergen."}
-                      >
-                      {(Array.isArray(siteStructure?.data?.section_settings) 
-                        ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false 
-                        : siteStructure?.data?.section_settings?.[section]?.visible === false) ? (
+                      className={`p-1 rounded mr-1 ${getSectionSetting(section, 'visible') === false ? 'text-slate-300 bg-slate-100 hover:bg-slate-200' : 'text-blue-500 bg-blue-50 hover:bg-blue-100'}`}
+                      title={getSectionSetting(section, 'visible') === false ? "Sectie is verborgen op de site. Klik om te tonen." : "Sectie is zichtbaar op de site. Klik om te verbergen."}
+                    >
+                      {getSectionSetting(section, 'visible') === false ? (
                         <i className="fa-solid fa-eye-slash text-[10px]"></i>
                       ) : (
                         <i className="fa-solid fa-eye text-[10px]"></i>
-                      )}                    </button>
+                      )}
+                    </button>
                     <div className="flex gap-1">
                     <button
                       onClick={() => moveSection(section, 'up')}
@@ -1166,7 +1166,7 @@ const DockFrame = () => {
                         step="4"
                         className="w-full accent-blue-500"
                         value={(Array.isArray(siteStructure?.data?.section_settings) 
-                          ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.padding 
+                          ? getSectionSetting(section, 'padding') 
                           : siteStructure?.data?.section_settings?.[section]?.padding) || 32}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);

@@ -9,17 +9,14 @@
 - [ ] **Disk Usage Visualizer**: Voeg een cirkel-grafiek toe aan de "Opslag" tab op basis van de nieuwe gecachete data.
 
 ## 🐛 Critical Bugfix & Polish (Urgent)
-- [x] **GitHub Tab Crash**: Fix `repos.filter` TypeError bij ontbrekende config. (Completed)
-- [x] **Live Links Missing**: Herstel inladen van `deployment.json` in SiteController. (Completed)
-- [x] **Dock Design Sync**: Zorg dat `DesignControls` (zijbalk) bij het opstarten ook de kleuren uit `style_config.json` inlaadt (nu staan ze op zwart na reload). (Completed)
 - [ ] **Modal Context Awareness**: Verbeter de `SITE_SYNC_RESPONSE` zodat de modal het verschil herkent tussen "geen kleur" (volg globaal) en "zwart".
-- [x] **Button Navigation Fix (De Schaar)**: Onderzoek waarom CTA en Navbar knoppen (behalve Home/Contact) niet scrollen naar de juiste sectie. (Completed)
 - [ ] **One-Step-Behind Prevention**: Finale controle op alle sliders om de 1-frame-delay volledig te elimineren in alle browsers.
 - [ ] **System-Wide Quality Audit**: Perform architectural scan and identify technical debt.
 - [ ] **Onboarding Validation**: Execute first live "Digital Strategist" onboarding session via CLI/Dashboard.
 - [ ] **Operation War Game**: Execute first end-to-end autonomous agent test via Gmail.
 - [ ] **Athena Hub Launch**: Final content polish and live Stripe payment test.
 - [ ] **Autonomous Reliability**: Configure cronjobs for nightly monitor and storage pruning.
+- [ ] **Component Cleanup**: Verwijder de ongebruikte `Editable*.jsx` bestanden uit alle sites (nu overbodig door v8.8 upgrade).
 
 ## 🏢 Operations & Governance
 - [ ] **Client Onboarding Protocol**: Implement the "Discovery Agent" and automated client technical provisioning.

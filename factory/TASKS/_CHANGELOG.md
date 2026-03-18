@@ -1,5 +1,14 @@
 # Changelog - Athena CMS Factory
 
+## [8.8.4] - 2026-03-18
+### 🔱 SYSTEM-WIDE MODERNIZATION & INFRASTRUCTURE AUTOMATION
+- **v8.8 Shift+Click Standard**: Volledige migratie van alle 48 sites en sitetypes naar native HTML-componenten (`<span>`, `<img>`, `<button>`). De logge `Editable*` wrappers zijn verwijderd, wat resulteert in 100% betrouwbare navigatie en ankerlinks binnen de Reviewer en Dock.
+- **Universal Dock Connector**: De `dock-connector.js` is geüpgraded naar een robuuste v8.8 versie die zowel oude JSON-bindings als nieuwe string-notaties (`hero.0.titel`) begrijpt.
+- **Sync-to-Prod Automation**: Nieuw `sync-to-prod.sh` script voor een veilige, geautomatiseerde overgang van `athena-x` (Ontwikkeling) naar `athena` (Productie), inclusief dependency checks en rsync data-synchronisatie.
+- **Scripts Index**: Introductie van `factory/SCRIPTS_INDEX.md`, een centrale referentie voor AI en ontwikkelaars over de beschikbare tools in de fabriek.
+- **Dock Robustness**: `DockFrame.jsx` hersteld en versterkt tegen crashes bij sites met object-gebaseerde `section_settings`.
+- **API & Syntax Recovery**: Critical fixes voor `externalDir` scoping en JSX-syntax herstel in meer dan 140 bestanden na de massale regex-upgrade.
+
 ## [8.8.0] - 2026-03-17
 ### 🔱 CHROMEBOOK OPTIMIZATION & UNIFIED PREVIEW HUB
 - **Unified Preview Hub (Port 5000)**: De API fungeert nu als een centrale proxy voor alle sites (Native & External). Dit omzeilt CORS-fouten en poort-blokkades op de Chromebook door alles via één origin te serveren (`/previews/:id/`).

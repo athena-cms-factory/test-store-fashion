@@ -19,6 +19,15 @@
 - [x] **Human-Readable Standard**: `GEMINI.md` uitgebreid met Nederlandstalige veldnamen-regel.
 - [x] **Site Localization**: De Schaar volledig omgezet naar Nederlandstalige JSON keys.
 
+## [2026-03-18] v8.8.4 - System-Wide Modernization & Standardisation
+- [x] **v8.8 Shift+Click Standard**: Migratie van alle 48 sites naar native HTML componenten voor betere betrouwbaarheid.
+- [x] **Universal Dock Connector**: Robuuste `dock-connector.js` die zowel JSON als dot-notation bindings ondersteunt.
+- [x] **Sync-to-Prod Script**: Automatisering van de overgang van ontwikkeling (`athena-x`) naar productie (`athena`).
+- [x] **Scripts Index**: Centrale referentie voor alle fabriekstools in `factory/SCRIPTS_INDEX.md`.
+- [x] **Dock Frame Recovery**: Herstel van crashes bij object-gebaseerde site-instellingen.
+- [x] **Critical Site Restoration**: Handmatige reparatie en optimalisatie van `athena-hub` en `athena-pro`.
+- [x] **Syntax Recovery Sweep**: Geautomatiseerde herstelronde voor JSX-fouten in 140+ bestanden.
+
 ## [2026-03-06] v8.0.6 - Design Controls & Text Styling (v8.3)
 - [x] **Header Transparency Slider**: Traploze transparantie slider (0-100%).
 - [x] **Dynamic Header Logic**: Automatische RGBA berekening en border-verwijdering.

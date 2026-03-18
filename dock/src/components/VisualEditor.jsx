@@ -28,6 +28,20 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
     paddingBottom: typeof initialValueData === 'object' ? (initialValueData.paddingBottom || 0) : 0
   });
 
+  // 🔱 v8.8 On-Demand Sync logica (Component Scope)
+  const requestSync = () => {
+    console.log('📡 [VisualEditor] Requesting sync for:', item.binding?.key);
+    const iframe = document.querySelector('iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({
+        type: 'DOCK_REQUEST_SYNC',
+        file: item.binding?.file,
+        index: item.binding?.index,
+        key: item.binding?.key
+      }, '*');
+    }
+  };
+
   // Initiale waarde zetten op basis van props (voor snelle start)
   useEffect(() => {
     if (typeof initialValueData === 'object') {
@@ -79,26 +93,9 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
 
     window.addEventListener('message', handleSyncResponse);
     
-    // On-Demand Sync logica
-    const requestSync = () => {
-      const iframe = document.querySelector('iframe');
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage({
-          type: 'DOCK_REQUEST_SYNC',
-          file: item.binding?.file,
-          index: item.binding?.index,
-          key: item.binding?.key
-        }, '*');
-      }
-    };
-
-    // STARTUP SEQUENCE:
-    // 1. Toon de modal (is mount)
-    // 2. Wacht heel even tot React klaar is
-    // 3. Vraag data op
+    // STARTUP SEQUENCE
     const timer = setTimeout(() => {
         requestSync();
-        // Fallback als de site niet reageert binnen 1 sec: gebruik initial data
         setTimeout(() => {
             if (!isLoaded) {
                 console.warn('⚠️ Site sync timeout, falling back to initial values');
@@ -128,7 +125,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
     } else if (isMedia) {
       finalData = value;
     } else {
-      // Check if we have any active styles
       const hasStyles = textStyles.color || textStyles.fontSize || textStyles.fontWeight !== 'normal' || 
                         textStyles.fontStyle !== 'normal' || textStyles.textAlign !== 'left' || 
                         textStyles.fontFamily || textStyles.shadowBlur > 0 || textStyles.shadowX !== 0 || textStyles.shadowY !== 0 ||
@@ -154,8 +150,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
   const getPreviewUrl = (filename) => {
     if (!filename) return '';
     if (filename.startsWith('http')) return filename;
-
-    // Construct URL from selected site
     const baseUrl = selectedSite?.url || '';
     const cleanBase = baseUrl.replace(/\/$/, '');
     return `${cleanBase}/images/${filename}`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
@@ -164,15 +158,9 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Use the upload logic from DockFrame if available or a direct upload
-    const formData = new FormData();
-    formData.append('file', file);
-
     const baseUrl = selectedSite?.url || '';
     const cleanBase = baseUrl.replace(/\/$/, '');
     const uploadUrl = `${cleanBase}/__athena/upload`;
-
     try {
       const res = await fetch(uploadUrl, {
         method: 'POST',
@@ -180,13 +168,8 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
         body: file
       });
       const data = await res.json();
-      if (data.success) {
-        setValue(data.filename);
-        // Direct save for media usually feels better
-        // onUpload(data.filename);
-      }
+      if (data.success) setValue(data.filename);
     } catch (err) {
-      console.error("Upload failed:", err);
       alert("Upload mislukt.");
     }
   };
@@ -230,13 +213,12 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                   ref={urlRef}
                   type="text"
                   defaultValue={linkData.url}
-                  onFocus={requestSiteSync} // DIT IS DE KEY: Vraag bij klik!
+                  onFocus={requestSync}
                   className="w-full p-4 bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-mono text-sm outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="#anchor or https://..."
-                />
-                <button
-                  onClick={requestSiteSync}
-                  className="absolute right-4 bottom-4 text-[10px] text-blue-500 font-bold hover:underline"
+                  />
+                  <button
+                  onClick={requestSync}                  className="absolute right-4 bottom-4 text-[10px] text-blue-500 font-bold hover:underline"
                 >
                   <i className="fa-solid fa-rotate mr-1"></i> SYNC
                 </button>
@@ -284,7 +266,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 rounded-2xl">
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-4">
-                    {/* Color */}
                     <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase text-slate-400 block">Color</label>
                       <input
@@ -294,8 +275,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                         className="w-10 h-10 rounded-lg cursor-pointer border border-slate-200 bg-transparent"
                       />
                     </div>
-
-                    {/* Font Size */}
                     <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase text-slate-400 block">Size (px)</label>
                       <input
@@ -306,8 +285,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                         className="w-20 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold"
                       />
                     </div>
-
-                    {/* Font Family */}
                     <div className="space-y-1 flex-1 min-w-[120px]">
                       <label className="text-[10px] font-black uppercase text-slate-400 block">Font</label>
                       <select
@@ -319,9 +296,7 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                       </select>
                     </div>
                   </div>
-
                   <div className="flex gap-4">
-                    {/* Font Style / Weight */}
                     <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase text-slate-400 block">Style</label>
                       <div className="flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
@@ -337,8 +312,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                         >I</button>
                       </div>
                     </div>
-
-                    {/* Alignment */}
                     <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase text-slate-400 block">Align</label>
                       <div className="flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
@@ -356,7 +329,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                     </div>
                   </div>
                 </div>
-
                 <div className="space-y-4 pt-4 md:pt-0 md:border-l md:border-slate-200 md:dark:border-slate-800 md:pl-6">
                   <div className="space-y-6">
                     <div>
@@ -383,7 +355,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                         </div>
                       </div>
                     </div>
-
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                       <label className="text-[10px] font-black uppercase text-purple-500 block mb-2">Vertical Spacing (Padding)</label>
                       <div className="grid grid-cols-2 gap-4">
@@ -400,7 +371,6 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
                   </div>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-slate-400">Content</label>
                 <textarea
@@ -432,13 +402,11 @@ const VisualEditor = ({ item, selectedSite, onSave, onCancel, onUpload }) => {
           >
             <i className="fa-solid fa-rotate-left"></i> Reset naar standaard
           </button>
-
           <div className="flex gap-4">
             <button onClick={onCancel} className="px-6 py-3 text-slate-500 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all">Cancel</button>
             <button onClick={handleSave} className="px-10 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-xl shadow-blue-500/20 active:scale-95 transition-all">SAVE CHANGES</button>
           </div>
         </div>
-
       </div>
     </div>
   );
