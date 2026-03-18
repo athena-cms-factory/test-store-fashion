@@ -1,58 +1,16 @@
 {
-  "5006": {
-    "pid": 28665,
-    "id": "academy-1",
+  "5610": {
+    "pid": 14789,
+    "id": "cloud-architects-bold",
     "type": "preview",
-    "startTime": "2026-03-18T18:07:30.538Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/academy-1-preview.log"
-  },
-  "5016": {
-    "pid": 28867,
-    "id": "ai-consultant-smartbe",
-    "type": "preview",
-    "startTime": "2026-03-18T18:07:33.993Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/ai-consultant-smartbe-preview.log"
-  },
-  "5017": {
-    "pid": 32484,
-    "id": "athena-promo",
-    "type": "preview",
-    "startTime": "2026-03-18T18:18:45.200Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/athena-promo-preview.log"
-  },
-  "5019": {
-    "pid": 30892,
-    "id": "urban-sneakers-store",
-    "type": "preview",
-    "startTime": "2026-03-18T18:13:01.008Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/urban-sneakers-store-preview.log"
-  },
-  "5815": {
-    "pid": 30829,
-    "id": "urban-soles",
-    "type": "preview",
-    "startTime": "2026-03-18T18:12:49.437Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/urban-soles-preview.log"
-  },
-  "6001": {
-    "pid": 31814,
-    "id": "athena-pro",
-    "type": "preview",
-    "startTime": "2026-03-18T18:18:10.694Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/athena-pro-preview.log"
+    "startTime": "2026-03-18T20:02:38.203Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/cloud-architects-bold-preview.log"
   },
   "6041": {
-    "pid": 28913,
+    "pid": 20694,
     "id": "athena-hub",
     "type": "preview",
-    "startTime": "2026-03-18T18:07:36.040Z",
+    "startTime": "2026-03-18T20:10:19.666Z",
     "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/athena-hub-preview.log"
-  },
-  "6483": {
-    "pid": 30955,
-    "id": "urban-oasis-warm",
-    "type": "preview",
-    "startTime": "2026-03-18T18:13:13.238Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/urban-oasis-warm-preview.log"
   }
 }

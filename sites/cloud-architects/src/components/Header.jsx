@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import EditableText from './EditableText';
-import EditableMedia from './EditableMedia';
-import EditableLink from './EditableLink';
 import { Link } from 'react-router-dom';
 
 function Header({ data = {} }) {
@@ -41,21 +38,16 @@ function Header({ data = {} }) {
         {/* Logo & Identity */}
         <Link to="/" className="flex items-center gap-4 group" onClick={() => setIsMenuOpen(false)}>
           <div className="relative w-12 h-12 overflow-hidden transition-transform duration-500">
-            <EditableMedia
-              src={displayLogo}
-              cmsBind={{ file: 'header', index: 0, key: 'logo' }}
-              className="w-full h-full object-contain"
-              fallback={logoChar}
-            />
+            <img src={displayLogo} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="header.0.logo" />
           </div>
 
           <div className="flex flex-col justify-center">
             <span className="text-2xl font-serif font-black tracking-tight text-primary leading-tight">
-              <EditableText value={siteName} cmsBind={{ file: 'header', index: 0, key: 'site_naam' }} />
+              <span data-dock-type="text" data-dock-bind="header.0.site_naam">{siteName}</span>
             </span>
             {tagline && (
               <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-black block mt-0.5" style={{ color: 'var(--color-accent, #3b82f6)' }}>
-                <EditableText value={tagline} cmsBind={{ file: 'header', index: 0, key: 'tagline' }} />
+                <span data-dock-type="text" data-dock-bind="header.0.tagline">{tagline}</span>
               </span>
             )}
           </div>
@@ -63,14 +55,11 @@ function Header({ data = {} }) {
 
         {/* Desktop Action Menu */}
         <div className="hidden md:flex items-center gap-8">
-          <EditableLink
-            as="button"
-            label={headerData.knop_tekst || "Contact"}
-            url={headerData.knop_link || "#contact"}
-            className="bg-primary text-white px-8 py-3 font-bold hover:bg-accent transition-all duration-300"
-            style={{ borderRadius: 'var(--radius-custom, 2.5rem)' }}
-            onClick={handleScroll}
-          />
+          <button onClick={(e) => { 
+                if (e.shiftKey) return; 
+                const target = document.getElementById("contact");
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: "smooth" }); }
+            }} data-dock-type="link" data-dock-bind="site_settings.0.titel">{}</button>
         </div>
 
         {/* Mobile Toggle */}
@@ -89,14 +78,11 @@ function Header({ data = {} }) {
           <Link to="/" className="text-lg font-bold text-primary py-2 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
             Home
           </Link>
-          <EditableLink
-            as="button"
-            label={headerData.knop_tekst || "Contact"}
-            url={headerData.knop_link || "#contact"}
-            className="w-full bg-primary text-white px-6 py-3 font-bold hover:bg-accent transition-colors text-center mt-2"
-            style={{ borderRadius: 'var(--radius-custom, 2.5rem)' }}
-            onClick={handleScroll}
-          />
+          <button onClick={(e) => { 
+                if (e.shiftKey) return; 
+                const target = document.getElementById("contact");
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: "smooth" }); }
+            }} data-dock-type="link" data-dock-bind="site_settings.0.titel">{}</button>
         </div>
       </div>
     </nav>

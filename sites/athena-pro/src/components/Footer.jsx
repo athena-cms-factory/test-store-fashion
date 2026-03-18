@@ -1,5 +1,4 @@
 import React from 'react';
-import EditableText from './EditableText';
 
 export default function Footer({ data }) {
   const settingsSource = data?.site_settings || {};
@@ -22,11 +21,11 @@ export default function Footer({ data }) {
           {/* Brand Identity */}
           <div className="space-y-6">
             <h3 className="text-3xl font-serif font-bold text-white">
-              <EditableText value={naam} cmsBind={{file: 'site_settings', index: 0, key: 'site_name'}} />
+              <span data-dock-type="text" data-dock-bind="site_settings.0.site_name">{naam}</span>
             </h3>
             {settings.tagline && (
               <p className="text-lg leading-relaxed font-light">
-                <EditableText value={settings.tagline} cmsBind={{file: 'site_settings', index: 0, key: 'tagline'}} />
+                <span data-dock-type="text" data-dock-bind="site_settings.0.tagline">{settings.tagline}</span>
               </p>
             )}
           </div>
@@ -38,13 +37,13 @@ export default function Footer({ data }) {
               {email && (
                 <li className="flex items-center gap-4">
                   <i className="fa-solid fa-envelope text-accent w-5"></i>
-                  <EditableText value={email} cmsBind={{file: 'contact', index: 0, key: 'email'}} />
+                  <span data-dock-type="text" data-dock-bind="contact.0.email">{email}</span>
                 </li>
               )}
               {locatie && (
                 <li className="flex items-center gap-4">
                   <i className="fa-solid fa-location-dot text-accent w-5"></i>
-                  <EditableText value={locatie} cmsBind={{file: 'contact', index: 0, key: 'locatie'}} />
+                  <span data-dock-type="text" data-dock-bind="contact.0.locatie">{locatie}</span>
                 </li>
               )}
               {linkedin && (
@@ -63,11 +62,11 @@ export default function Footer({ data }) {
               {btw && (
                 <p className="flex items-center gap-2">
                   <span className="text-slate-500">BTW:</span> 
-                  <EditableText value={btw} cmsBind={{file: 'contact', index: 0, key: 'btw_nummer'}} />
+                  <span data-dock-type="text" data-dock-bind="contact.0.btw_nummer">{btw}</span>
                 </p>
               )}
               <p className="text-sm font-light leading-relaxed">
-                <EditableText value={settings.footer_text || 'Professionele website geleverd door Athena CMS Factory.'} cmsBind={{file: 'site_settings', index: 0, key: 'footer_text'}} />
+                <span data-dock-type="text" data-dock-bind="site_settings.0.footer_text">{settings.footer_text || 'Professionele website geleverd door Athena CMS Factory.'}</span>
               </p>
             </div>
           </div>

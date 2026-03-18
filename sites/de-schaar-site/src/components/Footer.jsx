@@ -1,5 +1,4 @@
 import React from 'react';
-import EditableText from './EditableText';
 
 export default function Footer({ primaryTable, socialData = [], openingData = [] }) {
   const info = primaryTable?.[0] || {};
@@ -42,25 +41,12 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
           {/* Company Info */}
           <div className="md:col-span-2">
             <h3 className="text-3xl font-serif font-bold text-white mb-6 uppercase tracking-tighter">
-              <EditableText
-                tagName="span"
-                value={rawNaam}
-                table="footer"
-                id={0}
-                field={naamKey}
-              />
+              <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
             </h3>
             {adres && (
               <div className="mb-4 flex items-start gap-4">
                 <i className="fa-solid fa-location-dot text-accent mt-1 shrink-0"></i>
-                <EditableText
-                  tagName="p"
-                  className="text-lg leading-relaxed max-w-sm"
-                  value={adres}
-                  table="footer"
-                  id={0}
-                  field={adresKey}
-                />
+                <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
               </div>
             )}
 
@@ -84,13 +70,7 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
           {/* Contact */}
           <div>
             <h4 className="text-sm font-black text-white uppercase tracking-[0.2em] mb-8">
-              <EditableText
-                tagName="span"
-                value={info.footer_contact_title || 'Contact'}
-                table="footer"
-                id={0}
-                field="footer_contact_title"
-              />
+              <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
             </h4>
             <div className="space-y-6">
               {telefoon && (
@@ -98,14 +78,7 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
                   <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent transition-colors">
                     <i className="fa-solid fa-phone text-xs"></i>
                   </div>
-                  <EditableText
-                    tagName="span"
-                    className="text-sm font-bold group-hover:text-white transition-colors"
-                    value={telefoon}
-                    table="footer"
-                    id={0}
-                    field={telKey}
-                  />
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
                 </div>
               )}
               {email && (
@@ -113,14 +86,7 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
                   <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent transition-colors">
                     <i className="fa-solid fa-envelope text-xs"></i>
                   </div>
-                  <EditableText
-                    tagName="span"
-                    className="text-sm font-bold group-hover:text-white transition-colors"
-                    value={email}
-                    table="footer"
-                    id={0}
-                    field={emailKey}
-                  />
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
                 </div>
               )}
             </div>
@@ -134,8 +100,8 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
             <div className="space-y-2">
               {openingData.map((item, idx) => (
                 <div key={idx} className="flex justify-between text-xs border-b border-white/5 pb-1">
-                  <EditableText tagName="span" value={item.dag} table="openingsuren" id={idx} field="dag" className="opacity-50" />
-                  <EditableText tagName="span" value={item.uren} table="openingsuren" id={idx} field="uren" className="font-bold text-white" />
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
                 </div>
               ))}
             </div>
@@ -144,44 +110,19 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
           {/* Legal */}
           <div>
             <h4 className="text-sm font-black text-white uppercase tracking-[0.2em] mb-8">
-              <EditableText
-                tagName="span"
-                value={info.footer_admin_title || 'Administratie'}
-                table="footer"
-                id={0}
-                field="footer_admin_title"
-              />
+              <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
             </h4>
             {kvk && (
               <p className="text-xs mb-4 flex justify-between border-b border-white/5 pb-2">
                 <span className="opacity-50">
-                  <EditableText
-                    tagName="span"
-                    value={info.kvk_label || 'KVK Nummer'}
-                    table="footer"
-                    id={0}
-                    field="kvk_label"
-                  />
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
                 </span>
-                <EditableText
-                  tagName="span"
-                  className="text-white font-bold"
-                  value={kvk}
-                  table="footer"
-                  id={0}
-                  field={kvkKey}
-                />
+                <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
               </p>
             )}
             <p className="text-[10px] leading-relaxed opacity-30 mt-8">
               &copy; {new Date().getFullYear()} {naam}.<br />
-              <EditableText
-                tagName="span"
-                value={info.footer_rights_text || 'Alle rechten voorbehouden.'}
-                table="footer"
-                id={0}
-                field="footer_rights_text"
-              />
+              <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
             </p>
           </div>
         </div>
@@ -189,13 +130,7 @@ export default function Footer({ primaryTable, socialData = [], openingData = []
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[10px] uppercase tracking-widest opacity-20">
-            <EditableText
-              tagName="span"
-              value={info.footer_credit_text || 'Design by Athena CMS Factory'}
-              table="footer"
-              id={0}
-              field="footer_credit_text"
-            />
+            <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
           </p>
           <div className="flex gap-6 text-[10px] uppercase tracking-widest font-bold">
             <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>

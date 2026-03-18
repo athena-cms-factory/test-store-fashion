@@ -1,6 +1,4 @@
 import React from 'react';
-import EditableText from './EditableText';
-import EditableMedia from './EditableMedia';
 
 /**
  * Header (Docked Track)
@@ -59,11 +57,7 @@ function Header({ primaryTable, tableName, hero = {}, headerSettings = {}, navDa
               className="w-10 h-10 overflow-hidden"
               style={{ display: (settings.toon_logo === false || settings.header_show_logo === false) ? 'none' : 'block' }}
             >
-              <EditableMedia
-                src={settings.logo_afbeelding || settings.site_logo_image}
-                className="w-full h-full object-contain"
-                cmsBind={{ file: 'header_settings', index: 0, key: settings.logo_afbeelding ? 'logo_afbeelding' : 'site_logo_image' }}
-              />
+              <img src={settings.logo_afbeelding || settings.site_logo_image} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="header_settings.0.settings.logo_afbeelding" />
             </div>
           ) : (
             <div 
@@ -74,14 +68,7 @@ function Header({ primaryTable, tableName, hero = {}, headerSettings = {}, navDa
               <i className="fa-solid fa-scissors text-white"></i>
             </div>
           )}
-          <EditableText
-            tagName="span"
-            data-dock-element="header-title"
-            value={navTitleValue}
-            className="font-serif font-bold text-xl tracking-tighter uppercase"
-            style={{ display: (settings.toon_titel === false || settings.header_show_title === false) ? 'none' : 'inline' }}
-            cmsBind={{ file: 'footer', index: 0, key: 'bedrijfsnaam' }}
-          />
+          <span className="font-serif font-bold text-xl tracking-tighter uppercase" data-dock-type="text" data-dock-bind="footer.0.bedrijfsnaam">{navTitleValue}</span>
         </div>
 
         <div 
@@ -97,10 +84,7 @@ function Header({ primaryTable, tableName, hero = {}, headerSettings = {}, navDa
               style={{ display: (item.is_call_to_action && (settings.toon_cta_knop === false || settings.header_show_button === false)) ? 'none' : undefined }}
               className={`text-xs font-bold uppercase tracking-widest transition-colors hover:text-accent ${item.is_call_to_action ? 'px-5 py-2 bg-accent text-white rounded-full shadow-lg shadow-accent/20' : 'text-white/70'}`}
             >
-              <EditableText
-                value={item.titel_navigatie}
-                cmsBind={{ file: 'navbar', index: idx, key: 'titel_navigatie' }}
-              />
+              <span data-dock-type="text" data-dock-bind={`navbar.${idx}.${titel_navigatie}`}>{item.titel_navigatie}</span>
             </a>
           ))}
         </div>
@@ -114,13 +98,7 @@ function Header({ primaryTable, tableName, hero = {}, headerSettings = {}, navDa
       >
         {/* Background Media */}
         <div className="absolute inset-0">
-          <EditableMedia
-            src={heroData.hero_afbeelding || heroData.hero_image}
-            alt={titleString}
-            className="w-full h-full"
-            cmsBind={{ file: 'hero', index: 0, key: heroData.hero_afbeelding ? 'hero_afbeelding' : 'hero_image' }}
-            dataItem={heroData}
-          />
+          <img src={heroData.hero_afbeelding || heroData.hero_image} className="w-full h-full" data-dock-type="media" data-dock-bind="hero.0.heroData.hero_afbeelding" />
           {/* Dynamic Gradient Overlay */}
           <div
             className="absolute inset-0 z-10 pointer-events-none"
@@ -132,22 +110,10 @@ function Header({ primaryTable, tableName, hero = {}, headerSettings = {}, navDa
 
         <div className="flex-1 flex items-center justify-center text-center px-6 relative z-20">
           <div className="relative z-10 max-w-4xl mx-auto reveal">
-            <EditableText
-              tagName="h1"
-              value={heroTitleValue}
-              className="text-5xl md:text-7xl lg:text-9xl mb-8 font-serif font-bold text-[var(--color-title)] leading-tight"
-              cmsBind={{ file: 'hero', index: 0, key: heroData.titel ? 'titel' : 'title' }}
-            />
+            <h1 className="text-5xl md:text-7xl lg:text-9xl mb-8 font-serif font-bold text-[var(--color-title)] leading-tight" data-dock-type="text" data-dock-bind="hero.0.heroData.titel">{heroTitleValue}</h1>
 
             {taglineString && (
-              <EditableText
-                tagName="p"
-                value={rawTagline}
-                data-dock-element="header-tagline"
-                className="text-xl md:text-3xl font-light text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed italic"
-                style={{ display: (settings.toon_ondertitel === false || settings.header_show_tagline === false) ? 'none' : 'block' }}
-                cmsBind={{ file: 'hero', index: 0, key: heroData.ondertitel ? 'ondertitel' : 'tagline' }}
-              />
+              <p className="text-xl md:text-3xl font-light text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed italic" data-dock-type="text" data-dock-bind="hero.0.heroData.ondertitel">{rawTagline}</p>
             )}
             <div className="flex gap-6 justify-center">
               <a href="#tarieven" className="btn-primary px-10 py-5 text-lg">Onze Diensten</a>

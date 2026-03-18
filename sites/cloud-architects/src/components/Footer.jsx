@@ -1,6 +1,4 @@
 import React from 'react';
-import EditableText from './EditableText';
-import EditableLink from './EditableLink';
 
 export default function Footer({ data = {} }) {
   // Debugging logica (interne fallback)
@@ -24,10 +22,10 @@ export default function Footer({ data = {} }) {
           {/* Brand Identity */}
           <div className="space-y-6">
             <h3 className="text-3xl font-serif font-bold text-white">
-              <EditableText value={naam} cmsBind={{file: 'footer', index: 0, key: 'bedrijfsnaam'}} />
+              <span data-dock-type="text" data-dock-bind="footer.0.bedrijfsnaam">{naam}</span>
             </h3>
             <p className="text-lg leading-relaxed font-light">
-              <EditableText value={tagline} cmsBind={{file: 'footer', index: 0, key: 'tagline'}} />
+              <span data-dock-type="text" data-dock-bind="footer.0.tagline">{tagline}</span>
             </p>
           </div>
 
@@ -37,22 +35,15 @@ export default function Footer({ data = {} }) {
             <ul className="space-y-4">
               <li className="flex items-center gap-4">
                 <i className="fa-solid fa-envelope text-accent w-5"></i>
-                <EditableText value={email} cmsBind={{file: 'footer', index: 0, key: 'email'}} />
+                <span data-dock-type="text" data-dock-bind="footer.0.email">{email}</span>
               </li>
               <li className="flex items-center gap-4">
                 <i className="fa-solid fa-location-dot text-accent w-5"></i>
-                <EditableText value={adres} cmsBind={{file: 'footer', index: 0, key: 'adres'}} />
+                <span data-dock-type="text" data-dock-bind="footer.0.adres">{adres}</span>
               </li>
               <li className="flex items-center gap-4">
                 <i className="fa-brands fa-linkedin text-accent w-5"></i>
-                <EditableLink 
-                  label="LinkedIn Profile" 
-                  url={linkedin} 
-                  table="footer" 
-                  field="linkedin" 
-                  id={0} 
-                  className="hover:text-white transition-colors"
-                />
+                <a href={"#"} data-dock-type="link" data-dock-bind="site_settings.0.titel">{}</a>
               </li>
             </ul>
           </div>
@@ -63,7 +54,7 @@ export default function Footer({ data = {} }) {
             <div className="space-y-4">
               <p className="flex items-center gap-2">
                 <span className="text-slate-500">BTW:</span> 
-                <EditableText value={btw} cmsBind={{file: 'footer', index: 0, key: 'btw'}} />
+                <span data-dock-type="text" data-dock-bind="footer.0.btw">{btw}</span>
               </p>
               <p className="text-sm font-light leading-relaxed italic opacity-60">
                 Professionele website geleverd door Athena CMS Factory.

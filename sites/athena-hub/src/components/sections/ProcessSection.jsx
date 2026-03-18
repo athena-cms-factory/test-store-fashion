@@ -1,5 +1,4 @@
 import React from 'react';
-import EditableText from '../EditableText';
 
 const ProcessSection = ({ sectionName, items, sectionStyle }) => {
   return (
@@ -28,12 +27,12 @@ const ProcessSection = ({ sectionName, items, sectionStyle }) => {
                 <div className="flex-1 pt-4 md:pt-6">
                   {titleKey && (
                     <h3 className="text-2xl md:text-3xl font-bold text-primary mb-4 leading-tight">
-                      <EditableText value={item[titleKey]} cmsBind={{ file: sectionName, index: index, key: titleKey }} />
+                      <span data-dock-type="text" data-dock-bind={`sectionName.${index}.${titleKey}`}>{item[titleKey]}</span>
                     </h3>
                   )}
                   {textKey && (
                     <div className="text-xl leading-relaxed text-slate-600 font-light italic">
-                      <EditableText value={item[textKey]} cmsBind={{ file: sectionName, index: index, key: textKey }} />
+                      <span data-dock-type="text" data-dock-bind={`sectionName.${index}.${textKey}`}>{item[textKey]}</span>
                     </div>
                   )}
                 </div>

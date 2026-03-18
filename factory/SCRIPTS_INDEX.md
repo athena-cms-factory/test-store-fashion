@@ -23,7 +23,8 @@ Scripts voor batch-verwerking, onderhoud en specifieke migraties.
 ### Batch Updates
 - **update-all-sites.js**: Voert systeem-brede updates uit op alle gegenereerde sites.
 - **update-all-heros.js / headers.js / logos.js**: Specifieke batch-updates voor componenten.
-- **batch-upgrade-components.js**: Moderniseert componenten naar de nieuwste v8.8 standaarden.
+- **batch-upgrade-components.js**: Moderniseert alle sitetypes en sites door `<Editable*>` wrappers te vervangen door native v8.8 HTML met `data-dock-*` attributen.
+- **update-all-connectors.js**: Rolt de Master `dock-connector.js` uit naar alle sites voor uniforme Dock-communicatie.
 
 ### Audit & Debugging
 - **check-sites.sh**: Snel overzicht van de status van alle sites.

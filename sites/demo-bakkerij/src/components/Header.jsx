@@ -1,7 +1,4 @@
 import React from 'react';
-import EditableText from './EditableText';
-import EditableMedia from './EditableMedia';
-import EditableLink from './EditableLink';
 import { Link } from 'react-router-dom';
 
 function Header({ siteSettings = {} }) {
@@ -39,24 +36,19 @@ function Header({ siteSettings = {} }) {
             
             {settings.header_show_logo !== false && (
               <div className="relative w-12 h-12 overflow-hidden transition-transform duration-500">
-                 <EditableMedia 
-                   src={displayLogo} 
-                   cmsBind={{file: 'site_settings', index: 0, key: 'site_logo_image'}} 
-                   className="w-full h-full object-contain" 
-                   fallback={logoChar}
-                 />
+                 <img src={displayLogo} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="site_settings.0.site_logo_image" />
               </div>
             )}
             
             <div className="flex flex-col">
               {settings.header_show_title !== false && (
                 <span className="text-2xl font-serif font-black tracking-tight text-primary leading-none mb-1">
-                  <EditableText value={siteName} cmsBind={{file: 'site_settings', index: 0, key: 'site_name'}} />
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.site_name">{siteName}</span>
                 </span>
               )}
               {settings.header_show_tagline !== false && settings.tagline && (
                 <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-bold opacity-80">
-                  <EditableText value={settings.tagline} cmsBind={{file: 'site_settings', index: 0, key: 'tagline'}} />
+                  <span data-dock-type="text" data-dock-bind="site_settings.0.tagline">{settings.tagline}</span>
                 </span>
               )}
             </div>
@@ -66,16 +58,11 @@ function Header({ siteSettings = {} }) {
         {/* Action Menu */}
         <div className="flex items-center gap-8">
             {settings.header_show_button !== false && (
-              <EditableLink 
-                as="button"
-                label={settings.header_cta_label || "Contact"}
-                url={settings.header_cta_url || "#contact"}
-                table="site_settings"
-                field="header_cta"
-                id={0}
-                className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-accent transition-colors"
-                onClick={handleScroll}
-              />
+              <button onClick={(e) => { 
+                if (e.shiftKey) return; 
+                const target = document.getElementById("contact");
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: "smooth" }); }
+            }} data-dock-type="link" data-dock-bind="site_settings.0.titel">{}</button>
             )}
         </div>
       </div>

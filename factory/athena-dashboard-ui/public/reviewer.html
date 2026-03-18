@@ -111,7 +111,7 @@
     <script>
         let sites = [];
         let currentIndex = -1;
-        const API_BASE = window.location.origin;
+        const API_BASE = window.location.origin.replace('5001', '5000');
 
         // Elements
         const sidebar = document.getElementById('sidebar');
@@ -252,6 +252,8 @@
                 const result = await response.json();
 
                 if (result.success) {
+                    // 🚀 v8.8 Direct Loading: We gebruiken de directe URL (bijv. :5017) 
+                    // in plaats van de proxy (:5000/previews/...)
                     checkHealth(result.url);
                 } else {
                     showError("Start mislukt: " + (result.error || "Onbekende fout"));

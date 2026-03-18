@@ -1,6 +1,5 @@
 import React from 'react';
 import { HashLink as Link } from 'react-router-hash-link';
-import EditableText from './EditableText';
 
 export default function Footer({ data }) {
   // Gebruik de eerste elementen uit de arrays (conform Google Sheets mapping)
@@ -25,14 +24,11 @@ export default function Footer({ data }) {
                 {initials}
               </div>
               <h3 className="text-2xl font-bold text-white tracking-tight">
-                <EditableText value={siteTitle} cmsBind={{ file: 'site_settings', index: 0, key: 'site_title' }} />
+                <span data-dock-type="text" data-dock-bind="site_settings.0.site_title">{siteTitle}</span>
               </h3>
             </div>
             <p className="text-sm leading-relaxed max-w-xs">
-              <EditableText
-                value={settings.site_description || 'Professioneel webdesign voor ondernemers die vooruit willen.'}
-                cmsBind={{ file: 'site_settings', index: 0, key: 'site_description' }}
-              />
+              <span data-dock-type="text" data-dock-bind="site_settings.0.site_description">{settings.site_description || 'Professioneel webdesign voor ondernemers die vooruit willen.'}</span>
             </p>
           </div>
 
@@ -63,7 +59,7 @@ export default function Footer({ data }) {
                 <li className="flex items-start gap-3">
                   <i className="fa-solid fa-envelope text-blue-500 mt-1"></i>
                   <a href={`mailto:${email}`} className="hover:text-blue-400 transition-colors">
-                    <EditableText value={email} cmsBind={{ file: 'contact', index: 0, key: 'contact_email' }} />
+                    <span data-dock-type="text" data-dock-bind="contact.0.contact_email">{email}</span>
                   </a>
                 </li>
               )}

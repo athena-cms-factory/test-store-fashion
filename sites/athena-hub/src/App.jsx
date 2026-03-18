@@ -57,7 +57,7 @@ const App = ({ data: initialData }) => {
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)] transition-colors duration-500">
           <StyleInjector siteSettings={data['site_settings']} />
-          <Header siteSettings={data['site_settings']} />
+          <Header siteSettings={data['site_settings']} data={data} />
           <main style={{ paddingTop: 'var(--content-top-offset, 0px)' }}>
             <Section data={data} />
           </main>

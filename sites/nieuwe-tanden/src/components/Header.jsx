@@ -1,5 +1,4 @@
 import React from 'react';
-import EditableText from './EditableText';
 
 import { Link } from 'react-router-dom';
 
@@ -23,7 +22,7 @@ function Header({ primaryTable, siteSettings = {} }) {
             {siteName.charAt(0)}
           </div>
           <span className="text-xl font-serif font-bold tracking-tight" style={{ color: 'var(--color-primary)' }}>
-            <EditableText value={siteName} cmsBind={{file: 'site_settings', index: 0, key: 'title'}} />
+            <span data-dock-type="text" data-dock-bind="site_settings.0.title">{siteName}</span>
           </span>
         </Link>
 

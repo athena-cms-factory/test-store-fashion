@@ -364,17 +364,6 @@ app.get('/api/system/todo', (req, res) => {
     }
 });
 
-// 🔱 v8.8 Intelligent Static Routing for External Sites
-// Zorgt dat assets (JS/CSS) laden, zelfs als ze een hardcoded base-pad hebben
-if (fs.existsSync(externalDir)) {
-    const sites = fs.readdirSync(externalDir).filter(f => fs.statSync(path.join(externalDir, f)).isDirectory());
-    sites.forEach(site => {
-        // Serveer de site op zijn eigen naam (voor assets)
-        app.use(`/${site}`, express.static(path.join(externalDir, site)));
-        console.log(`📂 Site asset route active: /${site}`);
-    });
-}
-
 // 🔱 v8.8 Ultra-Robust Dynamic Site Proxy & Static Server
 // Dient als centrale hub (poort 5000) voor álle site previews om CORS te omzeilen
 app.use('/previews/:id', async (req, res, next) => {
