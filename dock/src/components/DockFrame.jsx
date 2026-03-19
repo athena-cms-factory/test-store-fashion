@@ -610,7 +610,7 @@ const DockFrame = () => {
   };
 
   const deleteItem = async (tableName, index) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
+    if (!window.confirm(`Weet je zeker dat je dit item (${index + 1}) definitief wilt verwijderen uit de sectie '${tableName}'?`)) return;
     try {
       const url = getSiteApiUrl();
       if (!url) return;
@@ -980,26 +980,30 @@ const DockFrame = () => {
 
       {/* Main Dock Area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar - Design Controls */}
+        {/* Left Sidebar - Consolidated Design & Section Controls */}
         <aside 
           style={{ width: `${leftWidth}px` }}
-          className="bg-white border-r border-slate-200 overflow-y-auto relative flex-shrink-0"
+          className="bg-slate-50 border-r border-slate-300 overflow-y-auto relative flex-shrink-0 shadow-inner"
         >
           <DesignControls
             onColorChange={updateColor}
             siteStructure={siteStructure}
+            onOpenSectionManager={() => setEditingItem({ type: 'SECTION_MANAGER' })}
+            currentPath={currentPath}
+            pages={pages}
+            onNavigate={handleNavigate}
           />
           {/* Left Resizer */}
           <div 
             onMouseDown={() => { isResizingLeft.current = true; document.body.classList.add('select-none'); }}
-            className="absolute right-0 top-0 w-1 h-full cursor-col-resize hover:bg-blue-400 transition-colors z-50"
+            className="absolute right-0 top-0 w-1.5 h-full cursor-col-resize hover:bg-blue-500 transition-colors z-50 border-r border-slate-300"
             title="Sleep naar links of rechts om het zijpaneel groter of kleiner te maken."
           />
         </aside>
 
         {/* Center - Site Preview in Iframe */}
-        <main className="flex-1 bg-slate-200 p-4 lg:p-8 flex items-center justify-center relative min-w-0">
-          <div className="h-full w-full bg-white rounded-lg shadow-2xl overflow-hidden relative" title="Interactieve weergave van je website. Klik op tekst of afbeeldingen om ze aan te passen.">
+        <main className="flex-1 bg-slate-300 p-4 lg:p-6 flex items-center justify-center relative min-w-0">
+          <div className="h-full w-full bg-white rounded shadow-2xl overflow-hidden relative border border-slate-400" title="Interactieve weergave van je website. Klik op tekst of afbeeldingen om ze aan te passen.">
             <iframe
               key={refreshKey}
               ref={iframeRef}
@@ -1012,324 +1016,36 @@ const DockFrame = () => {
 
           {editingItem && (
             <VisualEditor
-              key={`${editingItem.binding?.file || 'file'}-${editingItem.binding?.key || 'key'}-${editingItem.binding?.index || 0}`}
+              key={editingItem.type === 'SECTION_MANAGER' ? 'section-manager' : `${editingItem.binding?.file || 'file'}-${editingItem.binding?.key || 'key'}-${editingItem.binding?.index || 0}`}
               item={editingItem}
+              siteStructure={siteStructure}
               selectedSite={selectedSite}
               onSave={handleEditorSave}
               onCancel={() => setEditingItem(null)}
               onUpload={(filename) => handleEditorSave(filename)}
+              // Props voor Section Management
+              onMoveSection={moveSection}
+              onToggleSection={toggleSectionVisibility}
+              onUpdateLayout={updateLayout}
+              onUpdatePadding={(section, val) => {
+                  const idx = Array.isArray(siteStructure?.data?.section_settings) 
+                    ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
+                    : -1;
+                  if (idx !== -1) {
+                    if (iframeRef.current) {
+                      iframeRef.current.contentWindow.postMessage({ type: 'DOCK_UPDATE_SECTION_PADDING', section, value: val }, '*');
+                    }
+                    saveData('section_settings', idx, 'padding', val);
+                  }
+              }}
+              onAddItem={addItem}
+              onDeleteItem={deleteItem}
+              onMoveField={moveField}
+              onToggleField={toggleFieldVisibility}
+              onToggleInline={toggleFieldInline}
             />
           )}
-
-
-
-          {showSaveEverythingModal && (
-            <SaveEverythingModal 
-                isOpen={showSaveEverythingModal}
-                onClose={() => setShowSaveEverythingModal(false)}
-                onConfirm={executeSaveStep}
-                siteName={selectedSite?.name || selectedSite}
-            />
-          )}
-
-          {showConflictModal && (
-            <SourceConflictModal 
-                isOpen={showConflictModal}
-                report={conflictReport}
-                onClose={() => setShowConflictModal(false)}
-                onResolveGitHub={async () => {
-                  setShowConflictModal(false);
-                  await handlePullFromGitHub();
-                }}
-            />
-          )}
-
-
         </main>
-
-        {/* Right Sidebar - Section Tools */}
-        <aside 
-          style={{ width: `${rightWidth}px` }}
-          className="bg-white border-l border-slate-200 overflow-y-auto relative flex-shrink-0"
-        >
-          {/* Right Resizer */}
-          <div 
-            onMouseDown={() => { isResizingRight.current = true; document.body.classList.add('select-none'); }}
-            className="absolute left-0 top-0 w-1 h-full cursor-col-resize hover:bg-blue-400 transition-colors z-50"
-            title="Sleep naar links of rechts om het zijpaneel groter of kleiner te maken."
-          />
-          
-          <div className="p-4">
-            {/* Page Switcher (v6.6 MPA) */}
-          {pages.length > 0 && (
-            <div className="mb-8 pb-6 border-b border-slate-100">
-              <h3 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2" title="Lijst van alle beschikbare pagina's op deze website. Klik op een pagina om deze te bekijken en te bewerken.">
-                <i className="fa-solid fa-file-lines text-blue-500"></i> Pages
-              </h3>
-              <div className="space-y-1 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                {pages.map(page => {
-                  const path = page.path === '/home' ? '/' : page.path;
-                  const isActive = currentPath === path;
-                  return (
-                    <button
-                      key={page.path}
-                      onClick={() => handleNavigate(path)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center justify-between group ${isActive
-                          ? 'bg-blue-600 text-white font-bold shadow-md'
-                          : 'hover:bg-slate-50 text-slate-600'
-                        }`}
-                      title={`Navigeer naar de ${page.title} pagina.`}
-                    >
-                      <span className="truncate capitalize">{page.title}</span>
-                      {isActive && <span className="w-1.5 h-1.5 bg-white rounded-full"></span>}
-                      {!isActive && <span className="text-[9px] text-slate-300 group-hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity italic">view</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-lg text-slate-800">Section Tools</h3>
-            <button
-              onClick={() => forceRefresh()}
-              className="text-[10px] bg-slate-100 hover:bg-slate-200 p-1 rounded uppercase font-bold text-slate-500"
-              title="Scan de website opnieuw om nieuwe of gewijzigde secties te detecteren."
-            >
-              Scan
-            </button>
-          </div>
-          {siteStructure?.sections?.length > 0 ? (
-            siteStructure.sections.map(section => (
-              <div key={section} className="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-xl shadow-sm" title={`Beheersectie voor de '${section}' op je pagina.`}>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-bold text-slate-800 capitalize truncate" title={`Sectie: ${section}`}>
-                    {section === 'hero' ? 'Hero Settings' : 
-                     section === 'header_settings' ? 'Header Settings' : 
-                     section === 'site_settings' ? 'Site Settings' : section}
-                  </span>
-                  <div className="flex gap-1 items-center">
-                    <button
-                      onClick={() => toggleSectionVisibility(section)}
-                      className={`p-1 rounded mr-1 ${getSectionSetting(section, 'visible') === false ? 'text-slate-300 bg-slate-100 hover:bg-slate-200' : 'text-blue-500 bg-blue-50 hover:bg-blue-100'}`}
-                      title={getSectionSetting(section, 'visible') === false ? "Sectie is verborgen op de site. Klik om te tonen." : "Sectie is zichtbaar op de site. Klik om te verbergen."}
-                    >
-                      {getSectionSetting(section, 'visible') === false ? (
-                        <i className="fa-solid fa-eye-slash text-[10px]"></i>
-                      ) : (
-                        <i className="fa-solid fa-eye text-[10px]"></i>
-                      )}
-                    </button>
-                    <div className="flex gap-1">
-                    <button
-                      onClick={() => moveSection(section, 'up')}
-                      className="p-1 hover:bg-slate-200 text-slate-500 rounded"
-                      title="Verplaats deze sectie één plek omhoog op de pagina."
-                    >
-                      ↑
-                    </button>
-                    <button
-                      onClick={() => moveSection(section, 'down')}
-                      className="p-1 hover:bg-slate-200 text-slate-500 rounded"
-                      title="Verplaats deze sectie één plek omlaag op de pagina."
-                    >
-                      ↓
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-                <div className="space-y-4">
-                  {/* Layout Selector */}
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <label className="text-[9px] uppercase font-black text-slate-400 block mb-1">Layout</label>
-                      <select
-                        className="w-full text-xs p-2 bg-white border border-slate-200 rounded-lg text-slate-600 focus:outline-none focus:border-blue-400"
-                        onChange={(e) => updateLayout(section, e.target.value)}
-                        value={siteStructure?.layouts?.[section] || 'grid'}
-                        title="Kies de visuele indeling voor deze sectie (bijv. Raster, Lijst of Z-Patroon)."
-                      >
-                        <option value="grid">Grid (Raster)</option>
-                        <option value="list">List (Lijst)</option>
-                        <option value="z-pattern">Z-Pattern (Z-Vorm)</option>
-                        <option value="focus">Focus (Eén groot item)</option>
-                      </select>
-                    </div>
-                    <div className="w-24">
-                      <label className="text-[9px] uppercase font-black text-slate-400 block mb-1">Padding (y)</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="80" 
-                        step="4"
-                        className="w-full accent-blue-500"
-                        value={(Array.isArray(siteStructure?.data?.section_settings) 
-                          ? getSectionSetting(section, 'padding') 
-                          : siteStructure?.data?.section_settings?.[section]?.padding) || 32}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          const idx = Array.isArray(siteStructure?.data?.section_settings) 
-                            ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
-                            : -1;
-                          if (idx !== -1) {
-                            // Direct feedback via postMessage
-                            if (iframeRef.current) {
-                              iframeRef.current.contentWindow.postMessage({
-                                type: 'DOCK_UPDATE_SECTION_PADDING',
-                                section: section,
-                                value: val
-                              }, '*');
-                            }
-
-                            // Update local state
-                            setSiteStructure(prev => {
-                              if (!prev) return prev;
-                              const newData = { ...prev.data };
-                              const settings = [...(newData.section_settings || [])];
-                              if (settings[idx]) {
-                                settings[idx] = { ...settings[idx], padding: val };
-                                newData.section_settings = settings;
-                              }
-                              return { ...prev, data: newData };
-                            });
-
-                            saveData('section_settings', idx, 'padding', val);
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Field Management (NEW) */}
-                  <div>
-                    <label className="text-[9px] uppercase font-black text-slate-400 block mb-1">Field Management</label>
-                    <div className="space-y-1 bg-white p-2 rounded-lg border border-slate-100 max-h-40 overflow-y-auto">
-                      {(siteStructure?.data?.[section]?.[0] ? Object.keys(siteStructure.data[section][0]) : [])
-                        .filter(k => !['absoluteIndex', '_hidden', 'id', 'pk', 'uuid'].some(tf => k.toLowerCase().includes(tf)))
-                        .filter(k => !k.toLowerCase().includes('foto') && !k.toLowerCase().includes('image'))
-                        .sort((a, b) => {
-                          const order = siteStructure?.data?.display_config?.sections?.[section]?.visible_fields || [];
-                          const idxA = order.indexOf(a);
-                          const idxB = order.indexOf(b);
-                          if (idxA === -1 && idxB === -1) return 0;
-                          if (idxA === -1) return 1;
-                          if (idxB === -1) return -1;
-                          return idxA - idxB;
-                        })
-                        .map(field => {
-                          const displayConfig = siteStructure?.data?.display_config || { sections: {} };
-                          const config = displayConfig.sections?.[section] || { visible_fields: [], hidden_fields: [] };
-
-                          const isHidden = Array.isArray(config.hidden_fields) && config.hidden_fields.includes(field);
-                          const isVisible = !isHidden;
-
-                          return (
-                            <div key={field} className="flex items-center justify-between text-[10px] p-1.5 bg-white mb-1 rounded border border-slate-100 shadow-sm" title={`Veld: ${field}`}>
-                              <span className={`truncate flex-1 ${isVisible ? 'text-slate-700 font-bold' : 'text-slate-300 italic line-through'}`}>{field}</span>
-                              <div className="flex gap-1">
-                                <button
-                                  onClick={() => { console.log('↑ Clicked', field); moveField(section, field, 'up'); }}
-                                  className="p-1.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all cursor-pointer"
-                                  title="Verplaats dit veld omhoog in de weergave."
-                                >
-                                  <i className="fa-solid fa-chevron-up text-[8px]"></i>
-                                </button>
-                                <button
-                                  onClick={() => { console.log('↓ Clicked', field); moveField(section, field, 'down'); }}
-                                  className="p-1.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded transition-all cursor-pointer"
-                                  title="Verplaats dit veld omlaag in de weergave."
-                                >
-                                  <i className="fa-solid fa-chevron-down text-[8px]"></i>
-                                </button>
-                                <button
-                                  onClick={() => { console.log('👁 Clicked', field); toggleFieldVisibility(section, field); }}
-                                  className={`p-1.5 rounded transition-all cursor-pointer ${isVisible ? 'text-green-500 hover:bg-green-50' : 'text-slate-300 hover:bg-slate-100'}`}
-                                  title={isVisible ? 'Verberg dit veld op de website' : 'Toon dit veld op de website'}
-                                >
-                                  <i className={`fa-solid ${isVisible ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-                                </button>
-                                {isVisible && (
-                                  <button
-                                    onClick={() => { console.log('↔️ Clicked inline toggle', field); toggleFieldInline(section, field); }}
-                                    className={`p-1.5 rounded transition-all cursor-pointer ${Array.isArray(config.inline_fields) && config.inline_fields.includes(field) ? 'text-purple-500 hover:bg-purple-50' : 'text-slate-300 hover:bg-slate-100'}`}
-                                    title={Array.isArray(config.inline_fields) && config.inline_fields.includes(field) ? 'Dit veld staat NAAST het vorige veld. Klik om weer op een nieuwe regel te plaatsen.' : 'Dit veld staat op een NIEUWE REGEL. Klik om naast het vorige veld te plaatsen.'}
-                                  >
-                                    <i className={`fa-solid ${Array.isArray(config.inline_fields) && config.inline_fields.includes(field) ? 'fa-arrow-right-long' : 'fa-level-down-alt'}`}></i>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })
-                      }
-                    </div>
-                  </div>
-
-                  {/* Item Management */}
-                  <div>
-                    <label className="text-[9px] uppercase font-black text-slate-400 block mb-1">Items ({siteStructure?.data?.[section]?.length || 0})</label>
-                    <div className="max-h-32 overflow-y-auto mb-2 space-y-1 border-y border-slate-100 py-2">
-                      {siteStructure?.data?.[section]?.map((item, index) => {
-                        // Helper to extract text from potential Athena style-objects
-                        const extractItemText = (val) => {
-                          if (!val) return null;
-                          if (typeof val === 'string') return val;
-                          if (typeof val === 'object') return val.text || val.title || val.label || val.name || val.value;
-                          return null;
-                        };
-
-                        // Slimmere titel bepaling
-                        let title = extractItemText(item.naam) || 
-                                    extractItemText(item.titel) || 
-                                    extractItemText(item.header) || 
-                                    extractItemText(item.kop);
-
-                        if (!title) {
-                          // Zoek eerste beste string of style-object veld
-                          const validKey = Object.keys(item).find(k => {
-                            const val = item[k];
-                            const text = extractItemText(val);
-                            return text && text.length < 50 && !k.includes('foto') && !k.includes('image') && !k.includes('url');
-                          });
-                          if (validKey) title = extractItemText(item[validKey]);
-                        }
-                        if (!title) title = `Item ${index + 1}`;
-
-                        return (
-                          <div key={index} className="flex items-center justify-between bg-white p-1.5 rounded border border-slate-100 text-[10px]" title={`Beheer item: ${typeof title === 'string' ? title : 'Item'}`}>
-                            <span className="truncate flex-1 pr-2 text-slate-600">{title}</span>
-                            <button
-                              onClick={() => deleteItem(section, index)}
-                              className="p-2 -mr-1 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded transition-all"
-                              title="Verwijder dit item definitief uit de lijst."
-                            >
-                              <i className="fa-solid fa-trash-can"></i>
-                            </button>
-                          </div>
-                        );
-                      })}
-                      {(!siteStructure?.data?.[section] || siteStructure.data[section].length === 0) && (
-                        <p className="text-[10px] text-slate-400 italic text-center py-2">Geen items aanwezig.</p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => addItem(section)}
-                      className="w-full py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg transition-colors border border-blue-200"
-                      title="Voeg een nieuw, leeg item toe aan deze lijst om daarna in te vullen."
-                    >
-                      <i className="fa-solid fa-plus mr-1"></i> Add Item
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-slate-400 italic">Nog geen secties gedetecteerd. Klik op 'Scan' om te zoeken.</p>
-          )}
-          </div>
-        </aside>
       </div>
     </div>
   );

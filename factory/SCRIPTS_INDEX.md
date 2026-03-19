@@ -36,6 +36,10 @@ Scripts voor batch-verwerking, onderhoud en specifieke migraties.
 - **export-site-to-sheets.js**: Exporteert lokale JSON data naar een nieuwe Google Sheet.
 - **simulate-customers.js**: Genereert gesimuleerde klantverzoeken voor testing.
 
+## 🛡️ Safety & Backup (`factory/6-utilities/`)
+- **backup-org.sh**: Spiegelt alle repositories van de ene GitHub organisatie naar de andere. Ondersteunt `--update` flag voor volledige verversing en standaard 'skip' modus voor snelle hervatting.
+  > **💡 Best Practice:** Voer dit script uit in een **apart terminalvenster** om onderbrekingen door AI-sessie timeouts te voorkomen bij grote organisaties.
+
 ---
 
 *Update dit document bij het toevoegen van nieuwe belangrijke scripts.*

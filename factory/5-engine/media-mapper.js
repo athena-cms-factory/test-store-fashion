@@ -19,6 +19,8 @@ import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { generateWithAI } from './core/ai-engine.js';
 
+import { aggregateAllData } from './lib/data-aggregator.js';
+
 let activeProject = null;
 
 // --- CLI OVERRIDE ---
@@ -114,6 +116,11 @@ app.post('/__athena/update-json', async (req, res) => {
 
         fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
         console.log(`💾 [DATA] Update ${file}.json [${index}].${key} = ${value}`);
+
+        // 🔱 v8.1 Auto-Aggregation
+        const sitePath = path.resolve(root, '../sites', safeProject);
+        aggregateAllData(sitePath);
+
         res.json({ success: true });
     } catch (e) {
         console.error("Data update error:", e.message);
@@ -197,11 +204,14 @@ app.get('/api/data', (req, res) => {
     const EXCLUDED_TABLES = [
         'style_bindings', 
         '_system', 
-        '_links_config', 
-        'layout_settings', 
-        'section_order', 
-        'display_config',
-        'all_data' // v8 aggregated file
+        '_links_config',
+        'all_data',
+        'all_data_showcase',
+        'section_order',
+        'section_settings',
+        'layout_settings',
+        'style_config',
+        'display_config'
     ];
 
     if (fs.existsSync(dataDir)) {
