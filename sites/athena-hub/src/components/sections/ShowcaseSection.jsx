@@ -1,86 +1,113 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { DisplayConfigContext } from '../DisplayConfigContext';
 
-const ShowcaseSection = ({ items: data, sectionName }) => {
-  if (!data || data.length === 0) return null;
+const ShowcaseSection = ({ sectionName, items, sectionStyle }) => {
+  const displayConfig = useContext(DisplayConfigContext);
+  const sectionConfig = displayConfig?.sections?.[sectionName] || { visible_fields: [], hidden_fields: [], inline_fields: [] };
 
   return (
-    <section id="showcase" className="py-32 bg-white overflow-hidden" data-dock-section={sectionName}>
-      <div className="container mx-auto px-6">
-        
-        <div className="max-w-3xl mb-24">
-          <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-accent mb-6">Portfolio</h2>
-          <h3 className="text-5xl md:text-7xl font-serif font-black text-primary leading-tight mb-8">
-            Digital Architecture <br />
-            <span className="text-slate-300">That Scales.</span>
-          </h3>
-          <p className="text-2xl text-slate-500 font-light leading-relaxed">
-            Een selectie van onze meest recente projecten, variërend van razendsnelle SPA's tot complexe enterprise oplossingen.
-          </p>
+    <section 
+      id={sectionName} 
+      data-dock-section={sectionName} 
+      className="px-6 bg-slate-50 transition-all duration-300" 
+      style={{ 
+        ...sectionStyle,
+        paddingTop: `var(--section-padding-y, 6rem)`,
+        paddingBottom: `var(--section-padding-y, 6rem)`
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl">
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 capitalize leading-tight">
+              {sectionName.replace(/_/g, ' ')}
+            </h2>
+            <div className="h-1.5 w-32 bg-accent rounded-full mb-8"></div>
+            <p className="text-xl text-slate-600 font-light">
+              Digital Architecture That Scales. Een selectie van onze meest recente projecten.
+            </p>
+          </div>
+          <div className="hidden md:block">
+             <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Scroll to explore</span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {data.map((item, index) => {
-            const url = (item.link && item.link.url) ? item.link.url : "#";
-            const hasUrl = url !== '#';
-            const rawImg = item.image || 'placeholder.jpg';
-            const imgSrc = rawImg.startsWith('http') ? rawImg : `${import.meta.env.BASE_URL}images/${rawImg}`;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {items.map((item, index) => {
+            const allKeys = Object.keys(item).filter(k => 
+                !['absoluteIndex', '_hidden', 'id', 'pk', 'uuid'].some(tf => k.toLowerCase().includes(tf))
+            );
+
+            const visibleFields = sectionConfig.visible_fields?.length > 0 
+                ? sectionConfig.visible_fields.filter(k => allKeys.includes(k))
+                : allKeys.filter(k => !/foto|afbeelding|url|image|img|icon/i.test(k));
+
+            const hiddenFields = sectionConfig.hidden_fields || [];
+            const fieldsToRender = visibleFields.filter(f => !hiddenFields.includes(f));
             
+            const imgKey = Object.keys(item).find(k => /foto|afbeelding|url|image|img/i.test(k));
+            const linkKey = Object.keys(item).find(k => /link|url|website/i.test(k));
+
             return (
-              <div 
-                key={index} 
-                className="group flex flex-col bg-slate-50 rounded-[40px] overflow-hidden border border-slate-100 hover:border-accent/20 transition-all duration-700 hover:shadow-2xl hover:shadow-accent/5"
-              >
-                <a 
-                  href={url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="aspect-[16/10] overflow-hidden block relative"
-                  onClick={(e) => { if (e.shiftKey) e.preventDefault(); }}
-                >
-                  <img 
-                    src={imgSrc} 
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
-                    data-dock-type="media" 
-                    data-dock-bind={`${sectionName}.${index}.image`} 
-                  />
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <div className="bg-primary/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-tighter shadow-xl">
-                      Shift + Klik voor link
-                    </div>
+              <div key={index} className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                {/* Image Container */}
+                <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                  {imgKey && item[imgKey] && (
+                    <img 
+                        src={item[imgKey].startsWith('http') ? item[imgKey] : `${import.meta.env.BASE_URL}images/${item[imgKey]}`} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                        data-dock-type="media" 
+                        data-dock-bind={`${sectionName}.${index}.${imgKey}`} 
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
+                     {linkKey && (
+                        <a 
+                            href={typeof item[linkKey] === 'object' ? item[linkKey].url : (item[linkKey] || "#")} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-white text-primary px-6 py-2 rounded-full font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+                        >
+                            Bekijk Project
+                        </a>
+                     )}
                   </div>
-                </a>
+                </div>
 
-                <div className="p-12 flex flex-col flex-grow">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-3xl font-bold text-primary group-hover:text-accent transition-colors">
-                      <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.name`}>{item.name}</span>
-                    </h3>
-                    {item.category && (
-                      <span className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest" data-dock-type="text" data-dock-bind={`${sectionName}.${index}.category`}>{item.category}</span>
-                    )}
-                  </div>
+                {/* Content Container */}
+                <div className="p-8 flex-1 flex flex-col">
+                  {fieldsToRender.map((fk, fIdx) => {
+                      const isTitle = fIdx === 0;
+                      const isCategory = fk.toLowerCase().includes('cat') || fk.toLowerCase().includes('type');
+                      const val = item[fk];
+                      const displayText = typeof val === 'object' ? (val.text || val.label || val.title || JSON.stringify(val)) : val;
+                      
+                      if (isCategory) {
+                        return (
+                            <span key={fk} className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-3">
+                                <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>{displayText}</span>
+                            </span>
+                        );
+                      }
 
-                  <div className="text-lg leading-relaxed text-slate-600 mb-8 line-clamp-3 font-light italic">
-                    <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.description`}>{item.description}</span>
-                  </div>
-
-                  <div className="mt-auto pt-6 border-t border-slate-50 flex justify-between items-center">
-                    {hasUrl && (
-                      <a 
-                        href={url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-accent font-bold hover:translate-x-2 transition-transform flex items-center gap-2"
-                        data-dock-type="link"
-                        data-dock-bind={`${sectionName}.${index}.link.label`}
-                      >
-                        Bezoek Website <i className="fa-solid fa-arrow-right-long"></i>
-                      </a>
-                    )}
-                    <div className="flex gap-3 text-slate-300">
-                      <i className="fa-solid fa-laptop-code text-xl"></i>
-                      <i className="fa-solid fa-magnifying-glass-chart text-xl"></i>
-                    </div>
+                      return (
+                        <div key={fk} className={`${isTitle ? 'text-2xl font-bold text-primary mb-4 leading-tight' : 'text-slate-500 text-sm leading-relaxed mb-4 flex-1'}`}>
+                            <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>{displayText}</span>
+                        </div>
+                      );
+                  })}
+                  
+                  <div className="pt-6 border-t border-slate-50 mt-auto">
+                    <button 
+                        className="text-primary font-black text-xs uppercase tracking-widest flex items-center gap-2 group/btn"
+                        onClick={() => {
+                            const url = typeof item[linkKey] === 'object' ? item[linkKey].url : (item[linkKey] || "#");
+                            if (url !== "#") window.open(url, '_blank');
+                        }}
+                    >
+                        Project Details 
+                        <i className="fa-solid fa-arrow-right-long transition-transform group-hover/btn:translate-x-2"></i>
+                    </button>
                   </div>
                 </div>
               </div>

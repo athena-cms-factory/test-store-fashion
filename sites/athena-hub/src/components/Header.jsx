@@ -66,7 +66,7 @@ function Header({ siteSettings = {}, data }) {
             {settings.header_show_button !== false && (
               <button 
                 onClick={handleScroll} 
-                className="bg-primary text-white px-6 py-2 rounded-full font-bold hover:bg-accent transition-all"
+                className="bg-primary text-white px-6 py-1 rounded-full font-bold hover:bg-accent transition-all"
                 data-dock-type="link" 
                 data-dock-bind="header.0.cta_label"
               >

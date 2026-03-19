@@ -852,9 +852,9 @@ const DockFrame = () => {
   return (
     <div className="dock-container h-screen flex flex-col bg-slate-100">
       {/* ... header remains same ... */}
-      <header className="bg-slate-900 text-white p-4 flex items-center justify-between shadow-lg z-50">
+      <header className="bg-slate-900 text-white px-4 py-2 flex items-center justify-between shadow-lg z-50">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold">⚓ Athena Dock</h1>
+          <h1 className="text-2xl font-bold">Dock</h1>
           <SiteSelector
             selectedSite={selectedSite}
             onSelectSite={setSelectedSite}
