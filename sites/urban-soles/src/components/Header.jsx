@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 function Header({ siteSettings = {} }) {
+  const { cartCount, setIsCartOpen } = useCart();
   const settings = Array.isArray(siteSettings) ? (siteSettings[0] || {}) : (siteSettings || {});
   const siteName = settings.site_name || 'urban-soles';
   const logoChar = (settings.logo_text || siteName).charAt(0).toUpperCase();
@@ -43,8 +45,25 @@ function Header({ siteSettings = {} }) {
         </Link>
 
         {/* Action Menu */}
-        <div className="hidden md:flex items-center gap-8">
-            <a href={"#"} data-dock-type="link" data-dock-bind="site_settings.0.titel">{}</a>
+        <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="group relative p-2 text-primary hover:text-accent transition-all duration-500 active:scale-90"
+              aria-label="Winkelwagen"
+            >
+              <div className="relative p-1">
+                {/* Minimalist Architectural Cart Icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-7 h-7 stroke-[1.2] transition-transform duration-500 group-hover:-rotate-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                </svg>
+                
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-accent text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg transform translate-x-1 -translate-y-1 border-2 border-[var(--color-header-bg,white)] group-hover:scale-110 transition-all duration-500">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+            </button>
         </div>
       </div>
     </nav>
