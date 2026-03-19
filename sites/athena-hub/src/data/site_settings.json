@@ -11,7 +11,7 @@
     "header_transparent": false,
     "header_show_button": true,
     "content_top_offset": 16,
-    "header_visible": true,
+    "header_visible": false,
     "header_show_title": true,
     "header_show_logo": true,
     "header_show_tagline": true,

@@ -245,24 +245,21 @@ const DockFrame = () => {
   const updateColor = (key, value, shouldSave = true) => {
     if (iframeRef.current) {
       // 1. Determine target file
-      let file = 'site_settings';
-      if (key.startsWith('header_') || key === 'content_top_offset' || key.startsWith('toon_') || key === 'header_hoogte' || key === 'header_transparantie') {
-        file = 'header_settings';
-      } else if (key.startsWith('hero_') || key === 'title' || key === 'titel' || key === 'hero_overlay_transparantie') {
-        file = 'hero';
-      } else if (key.includes('global_')) {
-        file = 'style_config';
-      } else {
-        // Auto-detect if possible
-        const possibleFiles = ['style_config', 'site_settings', 'header_settings'];
-        for (const f of possibleFiles) {
-          const table = siteStructure?.data?.[f];
-          const row = Array.isArray(table) ? table[0] : table;
-          if (row && key in row) { file = f; break; }
-        }
+      let file = 'style_config';
+      
+      // Auto-detect based on current data
+      const possibleFiles = ['site_settings', 'header_settings', 'hero', 'style_config'];
+      for (const f of possibleFiles) {
+        const table = siteStructure?.data?.[f];
+        const row = Array.isArray(table) ? table[0] : table;
+        if (row && key in row) { file = f; break; }
       }
 
-      // 2. Live preview via postMessage (Crucial: send 'file'!)
+      // Overrides
+      if (key.startsWith('header_') && file === 'style_config') file = 'site_settings';
+      if (key.startsWith('hero_') && file === 'style_config') file = 'hero';
+
+      // 2. Live preview
       iframeRef.current.contentWindow.postMessage({
         type: 'DOCK_UPDATE_COLOR',
         file,
@@ -273,16 +270,17 @@ const DockFrame = () => {
 
       if (shouldSave) {
         const currentTable = siteStructure?.data?.[file];
-        const row = Array.isArray(currentTable) ? currentTable[0] : currentTable;
+        const isArray = Array.isArray(currentTable);
+        const row = isArray ? currentTable[0] : currentTable;
         const oldValue = row ? row[key] : null;
 
-        pushToHistory(file, 0, key, oldValue, value);
+        pushToHistory(file, isArray ? 0 : null, key, oldValue, value);
 
         if (typeof oldValue === 'object' && oldValue !== null) {
           const newValue = { ...oldValue, color: value };
-          saveData(file, 0, key, newValue, null, true);
+          saveData(file, isArray ? 0 : null, key, newValue, null, true);
         } else {
-          saveData(file, 0, key, value, null, true);
+          saveData(file, isArray ? 0 : null, key, value, null, true);
         }
       }
     }

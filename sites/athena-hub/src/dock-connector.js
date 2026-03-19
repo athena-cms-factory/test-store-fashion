@@ -96,6 +96,9 @@
                 document.documentElement.style.setProperty('--hero-height', value + 'px');
             } else if (key === 'hero_alignment') {
                 document.documentElement.style.setProperty('--hero-align', value);
+            } else if (key === 'header_visible') {
+                const nav = document.querySelector('nav');
+                if (nav) nav.style.display = value === false ? 'none' : 'flex';
             }
 
             // Theme colors

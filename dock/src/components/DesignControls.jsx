@@ -155,19 +155,19 @@ export default function DesignControls({
           onToggle={toggleAccordion}
         >
           <div className="space-y-4">
-            <Toggle label="Header Visible" settingsKey="header_zichtbaar" value={localData.header_zichtbaar} onPreview={handlePreview} onSave={handleSave} />
-            <Slider label="Header Height" value={parseInt(localData.header_hoogte || 80)} min={40} max={250} unit="px" onChange={(v) => { handlePreview('header_hoogte', v); handleSave('header_hoogte', v); }} />
+            <Toggle label="Header Visible" settingsKey="header_visible" value={localData.header_visible} onPreview={handlePreview} onSave={handleSave} />
+            <Slider label="Header Height" value={parseInt(localData.header_height || 80)} min={40} max={250} unit="px" onChange={(v) => { handlePreview('header_height', v); handleSave('header_height', v); }} />
             <Slider label="Transparency" value={Math.round((parseFloat(localData.header_transparantie) || 0) * 100)} min={0} max={100} unit="%" onChange={(v) => { handlePreview('header_transparantie', v/100); handleSave('header_transparantie', v/100); }} />
             <Slider label="Content Offset" value={parseInt(localData.content_top_offset || 0)} min={0} max={200} unit="px" onChange={(v) => { handlePreview('content_top_offset', v); handleSave('content_top_offset', v); }} />
             
             <div className="pt-2 grid grid-cols-1 gap-2 border-t border-slate-200 mt-2">
               <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Show/Hide Elements</p>
               <div className="grid grid-cols-2 gap-2">
-                <ToggleMini label="Logo" settingsKey="toon_logo" value={localData.toon_logo} onPreview={handlePreview} onSave={handleSave} />
-                <ToggleMini label="Title" settingsKey="toon_titel" value={localData.toon_titel} onPreview={handlePreview} onSave={handleSave} />
-                <ToggleMini label="Subtitle" settingsKey="toon_ondertitel" value={localData.toon_ondertitel} onPreview={handlePreview} onSave={handleSave} />
-                <ToggleMini label="CTA" settingsKey="toon_cta_knop" value={localData.toon_cta_knop} onPreview={handlePreview} onSave={handleSave} />
-                <ToggleMini label="Nav" settingsKey="toon_navigatie" value={localData.toon_navigatie} onPreview={handlePreview} onSave={handleSave} />
+                <ToggleMini label="Logo" settingsKey="header_show_logo" value={localData.header_show_logo} onPreview={handlePreview} onSave={handleSave} />
+                <ToggleMini label="Title" settingsKey="header_show_title" value={localData.header_show_title} onPreview={handlePreview} onSave={handleSave} />
+                <ToggleMini label="Subtitle" settingsKey="header_show_tagline" value={localData.header_show_tagline} onPreview={handlePreview} onSave={handleSave} />
+                <ToggleMini label="CTA" settingsKey="header_show_button" value={localData.header_show_button} onPreview={handlePreview} onSave={handleSave} />
+                <ToggleMini label="Nav" settingsKey="header_show_nav" value={localData.header_show_nav} onPreview={handlePreview} onSave={handleSave} />
               </div>
             </div>
           </div>
@@ -308,29 +308,35 @@ const Slider = ({ label, value, min, max, unit, onChange }) => (
   </div>
 );
 
-const Toggle = ({ label, settingsKey, value, onPreview, onSave }) => (
-  <div className="flex items-center justify-between py-1">
-    <label className="text-[10px] font-bold uppercase text-slate-600">{label}</label>
-    <button 
-      onClick={() => { const next = value === false; onPreview(settingsKey, next); onSave(settingsKey, next); }}
-      className={`w-10 h-5 rounded-full relative transition-colors ${value !== false ? 'bg-blue-500' : 'bg-slate-300'}`}
-    >
-      <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${value !== false ? 'right-1' : 'left-1'}`}></div>
-    </button>
-  </div>
-);
+const Toggle = ({ label, settingsKey, value, onPreview, onSave }) => {
+  const isActive = value === true || value === 'true';
+  return (
+    <div className="flex items-center justify-between py-1">
+      <label className="text-[10px] font-bold uppercase text-slate-600">{label}</label>
+      <button 
+        onClick={() => { const next = !isActive; onPreview(settingsKey, next); onSave(settingsKey, next); }}
+        className={`w-10 h-5 rounded-full relative transition-colors ${isActive ? 'bg-blue-500' : 'bg-slate-300'}`}
+      >
+        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${isActive ? 'right-1' : 'left-1'}`}></div>
+      </button>
+    </div>
+  );
+};
 
-const ToggleMini = ({ label, settingsKey, value, onPreview, onSave }) => (
-  <div className="flex flex-col gap-1 p-2 bg-white border border-slate-200 rounded">
-    <label className="text-[8px] font-black uppercase text-slate-400 truncate">{label}</label>
-    <button 
-      onClick={() => { const next = value === false; onPreview(settingsKey, next); onSave(settingsKey, next); }}
-      className={`w-full py-1 text-[9px] font-bold rounded border ${value !== false ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-slate-50 border-slate-200 text-slate-400'}`}
-    >
-      {value !== false ? 'ON' : 'OFF'}
-    </button>
-  </div>
-);
+const ToggleMini = ({ label, settingsKey, value, onPreview, onSave }) => {
+  const isActive = value === true || value === 'true';
+  return (
+    <div className="flex flex-col gap-1 p-2 bg-white border border-slate-200 rounded">
+      <label className="text-[8px] font-black uppercase text-slate-400 truncate">{label}</label>
+      <button 
+        onClick={() => { const next = !isActive; onPreview(settingsKey, next); onSave(settingsKey, next); }}
+        className={`w-full py-1 text-[9px] font-bold rounded border ${isActive ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-slate-50 border-slate-200 text-slate-400'}`}
+      >
+        {isActive ? 'ON' : 'OFF'}
+      </button>
+    </div>
+  );
+};
 
 const ColorGrid = ({ title, prefix, colors, onPreview, onSave }) => (
   <div className="space-y-3">

@@ -47,7 +47,8 @@
         "label": "Bekijk de Demo's",
         "url": "#showcase"
       },
-      "hero_overlay_transparantie": 0.02
+      "hero_overlay_transparantie": 0.02,
+      "hero_hoogte": 503
     }
   ],
   "innovatie": [],
@@ -405,7 +406,7 @@
       "header_transparent": false,
       "header_show_button": true,
       "content_top_offset": 16,
-      "header_visible": true,
+      "header_visible": false,
       "header_show_title": true,
       "header_show_logo": true,
       "header_show_tagline": true,
