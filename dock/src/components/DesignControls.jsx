@@ -10,7 +10,8 @@ export default function DesignControls({
   onOpenSectionManager,
   currentPath,
   pages,
-  onNavigate 
+  onNavigate,
+  isSectionManagerOpen
 }) {
   const lastInteractionTime = useRef(0);
   const [localData, setLocalData] = useState({});
@@ -77,9 +78,14 @@ export default function DesignControls({
       <div className="p-4 space-y-2 border-b border-slate-300 bg-white">
         <button 
           onClick={onOpenSectionManager}
-          className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow-sm flex items-center justify-center gap-2 transition-all uppercase text-xs tracking-wider"
+          className={`w-full py-3 font-bold rounded shadow-sm flex items-center justify-center gap-2 transition-all uppercase text-xs tracking-wider ${
+            isSectionManagerOpen 
+            ? 'bg-blue-50 text-blue-600 border border-blue-200' 
+            : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
         >
-          <i className="fa-solid fa-layer-group"></i> Manage Sections
+          <i className={`fa-solid ${isSectionManagerOpen ? 'fa-chevron-left' : 'fa-layer-group'}`}></i> 
+          {isSectionManagerOpen ? 'Close Tools' : 'Manage Sections'}
         </button>
         
         {/* Style Dropdown - Old School Style */}

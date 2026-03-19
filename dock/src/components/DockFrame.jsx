@@ -6,6 +6,8 @@ import HelpModal from './HelpModal';
 import SaveEverythingModal from './SaveEverythingModal';
 import SourceConflictModal from './SourceConflictModal';
 
+import SectionManagerPanel from './SectionManagerPanel';
+
 const DockFrame = () => {
   const [selectedSite, setSelectedSite] = useState('');
   const [siteStructure, setSiteStructure] = useState(null);
@@ -13,6 +15,7 @@ const DockFrame = () => {
   const [currentPath, setCurrentPath] = useState('/');
   const [isConnected, setIsConnected] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [showSectionManager, setShowSectionManager] = useState(false);
   const [showSaveEverythingModal, setShowSaveEverythingModal] = useState(false);
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [conflictReport, setConflictReport] = useState(null);
@@ -22,34 +25,9 @@ const DockFrame = () => {
 
   // Sidebar Resizing State
   const [leftWidth, setLeftWidth] = useState(260);
-  const [rightWidth, setRightWidth] = useState(260);
+  const [middleWidth, setMiddleWidth] = useState(390); // 1.5x van 260
   const isResizingLeft = useRef(false);
-  const isResizingRight = useRef(false);
-
-  useEffect(() => {
-    if (selectedSite) {
-      checkForConflicts();
-    }
-  }, [selectedSite]);
-
-  const checkForConflicts = async () => {
-    try {
-      const siteId = typeof selectedSite === 'string' ? selectedSite : (selectedSite.id || selectedSite.name);
-      if (!siteId) return;
-
-      const dashboardPort = import.meta.env.VITE_DASHBOARD_PORT || '5001';
-      const hostname = window.location.hostname;
-      const res = await fetch(`http://${hostname}:${dashboardPort}/api/sites/${siteId}/compare-sources`);
-      const data = await res.json();
-
-      if (data.hasRepo && data.hasDrift) {
-        setConflictReport(data);
-        setShowConflictModal(true);
-      }
-    } catch (err) {
-      console.error("Conflict check failed:", err);
-    }
-  };
+  const isResizingMiddle = useRef(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -57,16 +35,17 @@ const DockFrame = () => {
         const newWidth = Math.min(Math.max(180, e.clientX), 450);
         setLeftWidth(newWidth);
       }
-      if (isResizingRight.current) {
-        const newWidth = Math.min(Math.max(180, window.innerWidth - e.clientX), 450);
-        setRightWidth(newWidth);
+      if (isResizingMiddle.current) {
+        // Directe berekening vanaf de linker rand van het scherm
+        const newWidth = Math.min(Math.max(250, e.clientX), 850);
+        setMiddleWidth(newWidth);
       }
     };
 
     const handleMouseUp = () => {
       isResizingLeft.current = false;
-      isResizingRight.current = false;
-      document.body.classList.remove('select-none');
+      isResizingMiddle.current = false;
+      document.body.classList.remove('select-none', 'is-dragging');
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -75,7 +54,9 @@ const DockFrame = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, []);
+  }, [leftWidth]); // Afhankelijkheid van leftWidth is nodig voor correcte relatieve berekening
+
+  const isDragging = isResizingLeft.current || isResizingMiddle.current;
 
   // Undo/Redo State
   const [history, setHistory] = useState([]);
@@ -980,22 +961,55 @@ const DockFrame = () => {
 
       {/* Main Dock Area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar - Consolidated Design & Section Controls */}
+        {/* Left Sidebar - Shared container for Design Controls & Section Manager */}
         <aside 
-          style={{ width: `${leftWidth}px` }}
-          className="bg-slate-50 border-r border-slate-300 overflow-y-auto relative flex-shrink-0 shadow-inner"
+          style={{ width: `${showSectionManager ? middleWidth : leftWidth}px` }}
+          className={`bg-slate-50 border-r border-slate-300 overflow-y-auto relative flex-shrink-0 shadow-inner z-40 ${isDragging ? '' : 'transition-[width] duration-300 ease-in-out'}`}
         >
-          <DesignControls
-            onColorChange={updateColor}
-            siteStructure={siteStructure}
-            onOpenSectionManager={() => setEditingItem({ type: 'SECTION_MANAGER' })}
-            currentPath={currentPath}
-            pages={pages}
-            onNavigate={handleNavigate}
-          />
-          {/* Left Resizer */}
+          {showSectionManager ? (
+            <SectionManagerPanel
+              width={middleWidth}
+              siteStructure={siteStructure}
+              onClose={() => setShowSectionManager(false)}
+              onMoveSection={moveSection}
+              onToggleSection={toggleSectionVisibility}
+              onUpdateLayout={updateLayout}
+              onUpdatePadding={(section, val) => {
+                  const idx = Array.isArray(siteStructure?.data?.section_settings) 
+                    ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
+                    : -1;
+                  if (idx !== -1) {
+                    if (iframeRef.current) {
+                      iframeRef.current.contentWindow.postMessage({ type: 'DOCK_UPDATE_SECTION_PADDING', section, value: val }, '*');
+                    }
+                    saveData('section_settings', idx, 'padding', val);
+                  }
+              }}
+              onAddItem={addItem}
+              onDeleteItem={deleteItem}
+              onMoveField={moveField}
+              onToggleField={toggleFieldVisibility}
+              onToggleInline={toggleFieldInline}
+            />
+          ) : (
+            <DesignControls
+              onColorChange={updateColor}
+              siteStructure={siteStructure}
+              onOpenSectionManager={() => setShowSectionManager(true)}
+              currentPath={currentPath}
+              pages={pages}
+              onNavigate={handleNavigate}
+              isSectionManagerOpen={false}
+            />
+          )}
+
+          {/* Context-aware Resizer */}
           <div 
-            onMouseDown={() => { isResizingLeft.current = true; document.body.classList.add('select-none'); }}
+            onMouseDown={() => { 
+              if (showSectionManager) isResizingMiddle.current = true;
+              else isResizingLeft.current = true;
+              document.body.classList.add('select-none'); 
+            }}
             className="absolute right-0 top-0 w-1.5 h-full cursor-col-resize hover:bg-blue-500 transition-colors z-50 border-r border-slate-300"
             title="Sleep naar links of rechts om het zijpaneel groter of kleiner te maken."
           />
@@ -1016,33 +1030,13 @@ const DockFrame = () => {
 
           {editingItem && (
             <VisualEditor
-              key={editingItem.type === 'SECTION_MANAGER' ? 'section-manager' : `${editingItem.binding?.file || 'file'}-${editingItem.binding?.key || 'key'}-${editingItem.binding?.index || 0}`}
+              key={`${editingItem.binding?.file || 'file'}-${editingItem.binding?.key || 'key'}-${editingItem.binding?.index || 0}`}
               item={editingItem}
               siteStructure={siteStructure}
               selectedSite={selectedSite}
               onSave={handleEditorSave}
               onCancel={() => setEditingItem(null)}
               onUpload={(filename) => handleEditorSave(filename)}
-              // Props voor Section Management
-              onMoveSection={moveSection}
-              onToggleSection={toggleSectionVisibility}
-              onUpdateLayout={updateLayout}
-              onUpdatePadding={(section, val) => {
-                  const idx = Array.isArray(siteStructure?.data?.section_settings) 
-                    ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
-                    : -1;
-                  if (idx !== -1) {
-                    if (iframeRef.current) {
-                      iframeRef.current.contentWindow.postMessage({ type: 'DOCK_UPDATE_SECTION_PADDING', section, value: val }, '*');
-                    }
-                    saveData('section_settings', idx, 'padding', val);
-                  }
-              }}
-              onAddItem={addItem}
-              onDeleteItem={deleteItem}
-              onMoveField={moveField}
-              onToggleField={toggleFieldVisibility}
-              onToggleInline={toggleFieldInline}
             />
           )}
         </main>
