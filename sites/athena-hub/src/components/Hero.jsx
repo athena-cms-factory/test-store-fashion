@@ -38,7 +38,7 @@ const Hero = ({ data, sectionName, features = {}, style = {} }) => {
                 />
                 <div 
                     className="absolute inset-0 z-10 bg-black pointer-events-none transition-opacity duration-300" 
-                    style={{ opacity: `var(--hero-overlay-opacity, ${hero.hero_overlay_transparantie || 0.6})` }}
+                    style={{ opacity: `var(--hero-overlay-opacity, ${hero.hero_overlay_transparantie ?? 0.6})` }}
                 ></div>
             </div>
 
