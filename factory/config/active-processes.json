@@ -6,6 +6,13 @@
     "startTime": "2026-03-19T13:59:04.210Z",
     "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/athena-dock-dock.log"
   },
+  "5004": {
+    "pid": 1213,
+    "id": "media-mapper",
+    "type": "editor",
+    "startTime": "2026-03-19T14:49:30.415Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena-x/factory/output/logs/media-mapper-editor.log"
+  },
   "6041": {
     "pid": 31606,
     "id": "athena-hub",

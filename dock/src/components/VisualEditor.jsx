@@ -135,15 +135,31 @@ const VisualEditor = (props) => {
             </div>
           ) : isMedia ? (
             <div className="space-y-6">
-                <div className="aspect-video bg-slate-50 rounded overflow-hidden border-2 border-dashed border-slate-300 flex items-center justify-center group relative">
-                    {value ? <img src={value.startsWith('http') ? value : `${selectedSite?.url}/images/${value}`} alt="Preview" className="max-h-full object-contain" /> : <p className="text-slate-400">No Image Selected</p>}
-                    <label className="absolute inset-0 flex items-center justify-center bg-blue-600/80 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white font-black uppercase text-xs tracking-widest">
-                        <i className="fa-solid fa-upload mr-2"></i> Upload New Image
-                        <input type="file" className="hidden" onChange={async (e) => {
-                            const file = e.target.files[0];
+                <div 
+                    onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-blue-500', 'bg-blue-50'); }}
+                    onDragLeave={(e) => { e.preventDefault(); e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50'); }}
+                    onDrop={async (e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50');
+                        const file = e.dataTransfer.files[0];
+                        if (file) {
                             const res = await fetch(`${selectedSite?.url}/__athena/upload`, { method: 'POST', headers: { 'X-Filename': file.name }, body: file });
                             const data = await res.json();
                             if (data.success) setValue(data.filename);
+                        }
+                    }}
+                    className="aspect-video bg-slate-50 rounded overflow-hidden border-2 border-dashed border-slate-300 flex items-center justify-center group relative transition-all"
+                >
+                    {value ? <img src={value.startsWith('http') ? value : `${selectedSite?.url}/images/${value}`} alt="Preview" className="max-h-full object-contain" /> : <p className="text-slate-400">No Image Selected</p>}
+                    <label className="absolute inset-0 flex items-center justify-center bg-blue-600/80 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white font-black uppercase text-xs tracking-widest">
+                        <i className="fa-solid fa-upload mr-2"></i> Upload or Drop Image
+                        <input type="file" className="hidden" onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const res = await fetch(`${selectedSite?.url}/__athena/upload`, { method: 'POST', headers: { 'X-Filename': file.name }, body: file });
+                                const data = await res.json();
+                                if (data.success) setValue(data.filename);
+                            }
                         }} accept="image/*" />
                     </label>
                 </div>
