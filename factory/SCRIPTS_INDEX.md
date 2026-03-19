@@ -39,6 +39,7 @@ Scripts voor batch-verwerking, onderhoud en specifieke migraties.
 ## 🛡️ Safety & Backup (`factory/6-utilities/`)
 - **backup-org.sh**: Spiegelt alle repositories van de ene GitHub organisatie naar de andere. Ondersteunt `--update` flag voor volledige verversing en standaard 'skip' modus voor snelle hervatting.
   > **💡 Best Practice:** Voer dit script uit in een **apart terminalvenster** om onderbrekingen door AI-sessie timeouts te voorkomen bij grote organisaties.
+- **major-milestone-sync.sh**: Automatiseert het maken van een nieuwe MAJOR MILESTONE, het afzwakken van de vorige, het verplaatsen van tags en het synchroniseren van Dev naar Productie.
 
 ---
 
