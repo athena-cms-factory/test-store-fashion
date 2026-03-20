@@ -20,6 +20,7 @@ export const ApiService = {
 
   // Sites
   getSites: () => fetch(`${API_BASE}/sites`).then(res => res.json()),
+  getSiteStructure: (id) => fetch(`${API_BASE}/sites/${id}/structure`).then(res => res.json()),
   getSiteStatus: (name) => fetch(`${API_BASE}/sites/${name}/status`).then(res => res.json()),
   startSiteDev: (id) => fetch(`${API_BASE}/sites/${id}/preview`, { method: 'POST' }).then(res => res.json()),
   athenifySite: (id) => fetch(`${API_BASE}/sites/${id}/athenify`, { method: 'POST' }).then(res => res.json()),

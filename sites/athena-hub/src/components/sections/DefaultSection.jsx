@@ -57,10 +57,17 @@ const DefaultSection = ({ sectionName, items, sectionStyle, currentLayout, iconM
                       const isFirst = fIdx === 0;
                       const val = item[fk];
                       const displayText = typeof val === 'object' ? (val.text || val.label || val.title || JSON.stringify(val)) : val;
+                      const isEmail = typeof displayText === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(displayText);
                       
                       return (
                         <div key={fk} className={`${isFirst ? 'text-2xl font-bold text-primary mb-4 leading-tight' : 'text-slate-600 text-lg leading-relaxed mb-2'}`}>
-                            <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>{displayText}</span>
+                            {isEmail ? (
+                              <a href={`mailto:${displayText}`} className="hover:text-accent transition-colors underline decoration-accent/30 underline-offset-4" data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>
+                                {displayText}
+                              </a>
+                            ) : (
+                              <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>{displayText}</span>
+                            )}
                         </div>
                       );
                   })}
@@ -80,10 +87,17 @@ const DefaultSection = ({ sectionName, items, sectionStyle, currentLayout, iconM
                       const isFirst = fIdx === 0;
                       const val = item[fk];
                       const displayText = typeof val === 'object' ? (val.text || val.label || val.title || JSON.stringify(val)) : val;
+                      const isEmail = typeof displayText === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(displayText);
 
                       return (
                         <div key={fk} className={`${isFirst ? 'text-3xl font-serif font-bold text-primary leading-tight mb-8' : 'text-xl leading-relaxed text-slate-600 mb-6 font-light'}`}>
-                            <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>{displayText}</span>
+                            {isEmail ? (
+                              <a href={`mailto:${displayText}`} className="hover:text-accent transition-colors underline decoration-accent/30 underline-offset-8" data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>
+                                {displayText}
+                              </a>
+                            ) : (
+                              <span data-dock-type="text" data-dock-bind={`${sectionName}.${index}.${fk}`}>{displayText}</span>
+                            )}
                         </div>
                       );
                   })}

@@ -8,10 +8,20 @@ export default function SheetModal({ isOpen, site, onClose }) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (site) {
+    if (isOpen && site) {
+      setLoading(true)
       setSheetUrl(site.sheetUrl || '')
+      
+      // Fetch fresh structure data to get the latest sheetUrl
+      ApiService.getSiteStructure(site.name)
+        .then(res => {
+          if (res && res.sheetUrl) {
+            setSheetUrl(res.sheetUrl)
+          }
+        })
+        .finally(() => setLoading(false))
     }
-  }, [site])
+  }, [isOpen, site])
 
   if (!isOpen || !site) return null
 

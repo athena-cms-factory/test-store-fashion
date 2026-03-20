@@ -1,5 +1,14 @@
 # ✅ DONE - Athena CMS Factory
 
+## [2026-03-20] v8.8.5 - Component Interaction & Sheet Manager Recovery
+- [x] **Athena Hub Header Fix**: "Start Nu" knop correct gekoppeld aan de Contact sectie (was hardcoded naar showcase).
+- [x] **Universal Email Detection**: `DefaultSection.jsx` uitgebreid met automatische `mailto:` link detectie voor e-mailadressen.
+- [x] **Sheet Manager Backend Recovery**: Ontbrekende `getSiteStructure` en `linkSheet` methodes geïmplementeerd in `SiteController.js`.
+- [x] **API Route Alignment**: Route `/api/sites/:id/link-sheet` toegevoegd aan `server.js` voor compatibiliteit met de frontend.
+- [x] **Dynamic Sheet Loading**: `SheetModal.jsx` in de dashboard-ui aangepast om actief de actuele Sheet URL op te halen bij het openen.
+- [x] **Frontend Service Expansion**: `ApiService.js` uitgebreid met `getSiteStructure` methode.
+- [x] **Production Build Validation**: Volledige herbuild van de Dashboard UI (`pnpm run build`) en herstart via PM2 succesvol uitgevoerd.
+
 ## [2026-03-17] v8.8.0 - Chromebook Optimization & Unified Hub
 - [x] **Unified Preview Proxy**: Implementatie van `http-proxy-middleware` in de API voor centrale site-access.
 - [x] **Dynamic Port Registry**: Synchronisatie tussen Dock, Factory en centraal Port Manager register voltooid.

@@ -211,4 +211,40 @@ export class SiteController {
     async syncToSheet(id) { return await this.dataManager.syncToSheet(id); }
     async safePullFromGitHub(id) { return await this.execService.runSafePull(id); }
     async compareSiteSources(id) { return await this.dataManager.compareSources(id); }
+
+    getSiteStructure(id) {
+        let siteDir = path.join(this.sitesDir, id);
+        if (!fs.existsSync(siteDir)) siteDir = path.join(this.sitesExternalDir, id);
+        if (!fs.existsSync(siteDir)) throw new Error(`Site '${id}' niet gevonden.`);
+
+        const urlSheetPath = path.join(siteDir, 'project-settings', 'url-sheet.json');
+        let sheetUrl = null;
+
+        if (fs.existsSync(urlSheetPath)) {
+            try {
+                const urlConfig = JSON.parse(fs.readFileSync(urlSheetPath, 'utf8'));
+                // Use the first valid editUrl we find (usually site_settings or _system)
+                const firstKey = Object.keys(urlConfig)[0];
+                if (firstKey && urlConfig[firstKey].editUrl) {
+                    sheetUrl = urlConfig[firstKey].editUrl.split('#')[0]; // Strip the #gid part
+                }
+            } catch (e) {
+                console.error(`Fout bij laden van url-sheet.json voor ${id}:`, e.message);
+            }
+        }
+
+        return {
+            id,
+            sheetUrl,
+            hasUrlSheet: fs.existsSync(urlSheetPath)
+        };
+    }
+
+    async linkSheet(id, sheetUrl) {
+        console.log(`🔗 Linking sheet for ${id}: ${sheetUrl}`);
+        if (!sheetUrl) throw new Error("Geen Google Sheet URL opgegeven.");
+        
+        // Use the core sheet engine script to handle the linking logic
+        return await this.execService.runEngineScript('core/sheet-engine.js', [id, sheetUrl]);
+    }
 }

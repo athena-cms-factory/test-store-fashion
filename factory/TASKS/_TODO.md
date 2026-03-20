@@ -1,6 +1,5 @@
 # 📋 TODO - Athena CMS (Master Plan)
 
-1. gentse-dakwerken etc... athenifyen (of toch proberen)
 
 ## 🔱 v8.8 Maintenance & Performance (Current Focus)
 - [ ] **Unified Asset Handling**: Verplaats alle resterende `sites-external` assets naar een centrale CDN-achtige structuur binnen de monorepo.
@@ -11,10 +10,11 @@
 ## 🐛 Critical Bugfix & Polish (Urgent)
 - [ ] **Modal Context Awareness**: Verbeter de `SITE_SYNC_RESPONSE` zodat de modal het verschil herkent tussen "geen kleur" (volg globaal) en "zwart".
 - [ ] **One-Step-Behind Prevention**: Finale controle op alle sliders om de 1-frame-delay volledig te elimineren in alle browsers.
+- [x] **Athena Hub Header & Interaction Fix**: "Start Nu" en e-mail clickability verholpen (v8.8.5).
+- [ ] **Athena Hub Launch**: Finale content polish en live Stripe payment test.
+- [x] **Sheet Manager Recovery**: Herstel van Google Sheet URL koppeling in de Dashboard UI (v8.8.5).
+- [ ] **Sheet Manager Stability Monitor**: Test de nieuwe `getSiteStructure` en `linkSheet` flow op 3 andere sites om robuustheid te garanderen.
 - [ ] **System-Wide Quality Audit**: Perform architectural scan and identify technical debt.
-- [ ] **Onboarding Validation**: Execute first live "Digital Strategist" onboarding session via CLI/Dashboard.
-- [ ] **Operation War Game**: Execute first end-to-end autonomous agent test via Gmail.
-- [ ] **Athena Hub Launch**: Final content polish and live Stripe payment test.
 - [ ] **Autonomous Reliability**: Configure cronjobs for nightly monitor and storage pruning.
 - [ ] **Component Cleanup**: Verwijder de ongebruikte `Editable*.jsx` bestanden uit alle sites (nu overbodig door v8.8 upgrade).
 

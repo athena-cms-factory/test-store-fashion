@@ -18,7 +18,7 @@ function Header({ siteSettings = {}, headerData = {}, data }) {
 
   const handleScroll = (e) => {
     if (e.shiftKey) return;
-    const target = document.getElementById("showcase");
+    const target = document.getElementById("contact");
     if (target) {
       e.preventDefault();
       target.scrollIntoView({ behavior: 'smooth' });
