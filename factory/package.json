@@ -1,6 +1,6 @@
 {
   "name": "athena-factory",
-  "version": "4.5.0",
+  "version": "9.1.0",
   "type": "module",
   "scripts": {
     "start": "node dashboard/athena.js",
