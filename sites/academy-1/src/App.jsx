@@ -2,29 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { StyleInjector } from './components/StyleInjector';
 
 // 🔱 Athena v33 Modular Sync Bridge for Academy-1
-function App() {
-  const [data, setData] = useState(null);
+function App({ data: initialData }) {
+  const [data, setData] = useState(initialData || {});
   const [sectionOrder, setSectionOrder] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialData);
 
   const refreshData = async () => {
     try {
+      // Try to fetch live data (Modular Sync Bridge / Dashboard Dock)
       const orderRes = await fetch(`${import.meta.env.BASE_URL}src/data/section_order.json?v=${Date.now()}`);
-      const order = await orderRes.json();
-      setSectionOrder(order);
+      if (orderRes.ok) {
+        const order = await orderRes.json();
+        setSectionOrder(order);
+      } else if (initialData?.Section_Order) {
+        setSectionOrder(initialData.Section_Order);
+      }
 
       const files = ['site_settings', 'cursussen', 'docenten', 'reviews', 'style_config'];
-      const loadedData = {};
+      const loadedData = { ...data };
       for (const file of files) {
         try {
           const res = await fetch(`${import.meta.env.BASE_URL}src/data/${file}.json?v=${Date.now()}`);
-          loadedData[file] = await res.json();
-        } catch (e) { loadedData[file] = []; }
+          if (res.ok) {
+            loadedData[file] = await res.json();
+          }
+        } catch (e) { /* Fallback to existing data */ }
       }
       setData(loadedData);
       setLoading(false);
     } catch (err) {
-      console.error("🔱 Athena Sync Error:", err);
+      console.warn("🔱 Athena Sync: Live fetch ignored (expected in production). Using bundled data.");
+      if (initialData?.Section_Order) setSectionOrder(initialData.Section_Order);
       setLoading(false);
     }
   };
