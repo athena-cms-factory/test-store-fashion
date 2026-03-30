@@ -26,10 +26,16 @@ const Services = ({ data }) => {
                   isRecommended ? 'border-blue-500 shadow-2xl' : 'border-slate-200'
                 }`}
               >
-                <h3 className="text-2xl font-bold text-slate-900">{pkg.title}</h3>
-                <p className="mt-4 text-slate-500">{pkg.description}</p>
+                <h3 className="text-2xl font-bold text-slate-900">
+                  <span data-dock-type="text" data-dock-bind={`services.${idx}.title`}>{pkg.title}</span>
+                </h3>
+                <p className="mt-4 text-slate-500">
+                  <span data-dock-type="text" data-dock-bind={`services.${idx}.description`}>{pkg.description}</span>
+                </p>
                 <div className="mt-6">
-                  <span className="text-4xl font-extrabold text-slate-900">{pkg.price}</span>
+                  <span className="text-4xl font-extrabold text-slate-900">
+                    <span data-dock-type="text" data-dock-bind={`services.${idx}.price`}>{pkg.price}</span>
+                  </span>
                 </div>
                 <ul className="mt-8 space-y-4 text-left">
                   {features.map((feature, fIdx) => (
