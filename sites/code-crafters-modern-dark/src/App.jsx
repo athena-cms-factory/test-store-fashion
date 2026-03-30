@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import React, { useMemo } from 'react';
 import { HashRouter as Router } from 'react-router-dom';
 

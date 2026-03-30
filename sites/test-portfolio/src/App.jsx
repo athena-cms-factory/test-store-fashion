@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import React from 'react';
 import Hero from './components/Hero';
 import Projects from './components/Projects';

@@ -19,16 +19,14 @@ export default function PageRenderer({ file }) {
                 if (!pageRes.ok) throw new Error("Pagina data niet gevonden");
                 const pageData = await pageRes.json();
                 
-                // Fetch globale styles (Development/Dock only)
-                if (import.meta.env.DEV) {
-                    try {
-                        const styleRes = await fetch(base + 'src/data/style_bindings.json?t=' + Date.now());
-                        if (styleRes.ok) {
-                            const styleData = await styleRes.json();
-                            setStyles(styleData);
-                        }
-                    } catch (e) { /* Geen styles gevonden */ }
-                }
+                // Fetch globale styles (indien aanwezig)
+                try {
+                    const styleRes = await fetch(base + 'src/data/style_bindings.json?t=' + Date.now());
+                    if (styleRes.ok) {
+                        const styleData = await styleRes.json();
+                        setStyles(styleData);
+                    }
+                } catch (e) { /* Geen styles gevonden */ }
 
                 setData(pageData);
                 setLoading(false);

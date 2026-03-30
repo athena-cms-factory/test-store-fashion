@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import { DisplayConfigProvider } from './components/DisplayConfigContext';
 import React, { useMemo, useState, useEffect } from 'react';
 import Header from './components/Header';
@@ -6,6 +7,8 @@ import Footer from './components/Footer';
 import StyleInjector from './components/StyleInjector';
 
 const App = ({ data: initialData }) => {
+  const [data, setData] = useState(initialData || {});
+  const [loading, setLoading] = useState(!initialData);
   const [data, setData] = useState(initialData);
 
   useEffect(() => {

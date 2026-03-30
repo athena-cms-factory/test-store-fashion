@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import StyleInjector from './components/StyleInjector';
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router } from 'react-router-dom';
@@ -9,6 +10,8 @@ import Footer from './components/Footer';
 import { DisplayConfigProvider } from './components/DisplayConfigContext';
 
 const App = ({ data: initialData }) => {
+  const [data, setData] = useState(initialData || {});
+  const [loading, setLoading] = useState(!initialData);
   const [data, setData] = useState(() => {
     const saved = sessionStorage.getItem('athena_live_overrides');
     if (saved) {

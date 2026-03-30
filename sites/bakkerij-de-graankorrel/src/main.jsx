@@ -8,6 +8,8 @@ const siteData = {};
 
 Object.keys(dataFiles).forEach(path => {
   const fileName = path.split('/').pop().replace('.json', '');
+  const key = fileName.charAt(0).toUpperCase() + fileName.slice(1);
+  siteData[key] = dataFiles[path].default || dataFiles[path];
   siteData[fileName] = dataFiles[path].default || dataFiles[path];
 });
 

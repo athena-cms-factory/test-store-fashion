@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import StyleInjector from './components/StyleInjector';
 import React, { useMemo } from 'react';
 import { HashRouter as Router } from 'react-router-dom';

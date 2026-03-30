@@ -17,8 +17,9 @@ async function init() {
 
     const tableData = dataFiles[path].default || dataFiles[path];
     
-    // Use the raw file name as key (snake_case) to match component usage
-    data[fileName] = tableData;
+    // Preserve the original transformation logic for keys
+    const camelKey = fileName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('_');
+    data[camelKey] = tableData;
     
     if (Array.isArray(tableData)) totalRows += tableData.length;
   });

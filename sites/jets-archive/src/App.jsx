@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router } from 'react-router-dom';
 import { DisplayConfigProvider } from './components/DisplayConfigContext';
@@ -7,6 +8,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 const App = ({ data: initialData }) => {
+  const [data, setData] = useState(initialData || {});
+  const [loading, setLoading] = useState(!initialData);
   const [data, setData] = useState(initialData);
   const [selectedDecades, setSelectedDecades] = useState([]); // Empty array means 'All'
 

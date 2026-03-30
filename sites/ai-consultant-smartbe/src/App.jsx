@@ -1,3 +1,4 @@
+// 🔱 Athena v33 Modular Sync Bridge
 import { DisplayConfigProvider } from './components/DisplayConfigContext';
 import React from 'react';
 import './index.css';
