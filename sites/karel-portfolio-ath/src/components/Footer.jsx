@@ -1,83 +1,94 @@
 import React from 'react';
+import * as Icons from 'lucide-react';
 
-export default function Footer({ data, profile, socials }) {
-  // Gebruik data prop indien aanwezig, anders fallback naar individuele props
-  const settings = data?.site_settings?.[0] || data?.site_settings || {};
-  const contactInfo = data?.contact?.[0] || profile || {};
-
-  const naam = settings.site_name || profile?.full_name || 'Karel Decherf';
-  const email = contactInfo.email || settings.email || '';
-  const locatie = contactInfo.locatie || contactInfo.location || '';
-  const btw = contactInfo.btw_nummer || '';
-  const linkedin = contactInfo.linkedin_url || contactInfo.linkedin || '';
+/**
+ * Premium Footer for Karel Portfolio Ath
+ */
+const Footer = ({ data }) => {
+  const profile = data['profile']?.[0] || {};
+  const socials = data['socials'] || [];
+  const siteSettings = data['site_settings']?.[0] || {};
+  
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="py-24 bg-[#0a0a0a] text-slate-400 border-t border-white/5 relative overflow-hidden">
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-20 mb-20">
-          
-          {/* Brand Identity */}
-          <div className="space-y-6">
-            <h3 className="text-3xl font-serif font-bold text-white">
-              <span data-dock-type="text" data-dock-bind="site_settings.0.site_name">{naam}</span>
-            </h3>
-            <p className="text-lg leading-relaxed font-light">
-              <span data-dock-type="text" data-dock-bind="site_settings.0.tagline">{settings.tagline || 'Full Stack Developer'}</span>
+    <footer className="pt-40 pb-20 px-6 bg-black relative overflow-hidden border-t border-white/5">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 mb-32">
+          {/* Brand & Bio */}
+          <div className="lg:col-span-2">
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-10 leading-none group">
+                <span className="text-white group-hover:text-blue-500 transition-colors duration-500">{siteSettings.logo_text || "Karel Decherf"}</span><span className="text-blue-500/50 group-hover:text-white transition-colors duration-500">.</span>
+            </h2>
+            <p className="text-zinc-500 text-lg leading-relaxed max-w-md font-light mb-12">
+                {profile.bio_short || "Innovating through full-stack engineering and AI automation."}
             </p>
-          </div>
-
-          {/* Contact Details */}
-          <div className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Contact</h4>
-            <ul className="space-y-4">
-              {email && (
-                <li className="flex items-center gap-4">
-                  <i className="fa-solid fa-envelope text-accent w-5"></i>
-                  <span data-dock-type="text" data-dock-bind="contact.0.email">{email}</span>
-                </li>
-              )}
-              {locatie && (
-                <li className="flex items-center gap-4">
-                  <i className="fa-solid fa-location-dot text-accent w-5"></i>
-                  <span data-dock-type="text" data-dock-bind="contact.0.locatie">{locatie}</span>
-                </li>
-              )}
-              {linkedin && (
-                <li className="flex items-center gap-4">
-                  <i className="fa-brands fa-linkedin text-accent w-5"></i>
-                  <a href={linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn Profile</a>
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* Legal / Company Info */}
-          <div className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Bedrijfsgegevens</h4>
-            <div className="space-y-4">
-              {btw && (
-                <p className="flex items-center gap-2">
-                  <span className="text-slate-500">BTW:</span> 
-                  <span data-dock-type="text" data-dock-bind="contact.0.btw_nummer">{btw}</span>
-                </p>
-              )}
-              <p className="text-sm font-light leading-relaxed">
-                <span data-dock-type="text" data-dock-bind="site_settings.0.footer_text">{settings.footer_text || 'Professionele website geleverd door Athena CMS Factory.'}</span>
-              </p>
+            <div className="flex gap-4">
+              {socials.map((social, idx) => {
+                const IconComponent = Icons[social.icon_name] || Icons.Share2;
+                return (
+                  <a 
+                    key={idx} 
+                    href={social.url} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="w-16 h-16 rounded-full border border-white/5 flex items-center justify-center text-zinc-400 hover:bg-white hover:text-black hover:border-white transition-all duration-500 shadow-2xl hover:shadow-white/20"
+                    title={social.platform}
+                  >
+                    <IconComponent size={24} />
+                  </a>
+                )
+              })}
             </div>
           </div>
 
-        </div>
+          {/* Contact & Availability */}
+          <div className="flex flex-col justify-end">
+            <h3 className="text-blue-500 font-black uppercase tracking-[0.4em] mb-10 text-xs sm:text-sm">Contact</h3>
+            <a 
+                href={`mailto:${profile.contact_email}`} 
+                className="text-2xl md:text-3xl font-black uppercase tracking-tighter hover:text-blue-500 transition-colors duration-500 leading-tight mb-4"
+            >
+                {profile.contact_email || "Connect with me"}
+            </a>
+            <p className="text-zinc-500 text-xs font-black uppercase tracking-widest leading-loose">
+                Available for meaningful <br/> collaborations worldwide.
+            </p>
+          </div>
 
-        {/* Copyright Bar */}
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
-          <p>&copy; {new Date().getFullYear()} {naam}. Alle rechten voorbehouden.</p>
-          <div className="flex items-center gap-2 opacity-50">
-            <img src="./athena-icon.svg" alt="Athena Logo" className="w-5 h-5" />
-            <span>Gemaakt met Athena CMS Factory</span>
+          {/* Footer Navigation */}
+          <div className="flex flex-col justify-end">
+            <h3 className="text-blue-500 font-black uppercase tracking-[0.4em] mb-10 text-xs sm:text-sm">Navigation</h3>
+            <nav className="flex flex-col gap-4">
+                {['Projects', 'Services', 'Testimonials'].map(item => (
+                    <a 
+                        key={item}
+                        href={`#${item.toLowerCase()}`} 
+                        className="text-zinc-500 hover:text-white text-sm font-black uppercase tracking-widest transition-colors duration-500"
+                    >
+                        {item}
+                    </a>
+                ))}
+            </nav>
           </div>
         </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 opacity-40">
+           <p className="text-[10px] font-black uppercase tracking-[0.4em]">
+             &copy; {currentYear} {siteSettings.logo_text || "Karel Decherf"} &mdash; ALL RIGHTS RESERVED
+           </p>
+           <div className="flex items-center gap-4">
+             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
+             <p className="text-[10px] font-black uppercase tracking-[0.4em]">SYSTEMS ONLINE / OPTIMIZED</p>
+           </div>
+        </div>
       </div>
+      
+      {/* Decorative Glow */}
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none -mr-40 -mb-40"></div>
     </footer>
   );
-}
+};
+
+export default Footer;
