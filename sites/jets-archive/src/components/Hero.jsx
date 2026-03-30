@@ -25,7 +25,7 @@ const Hero = ({ data, sectionName, features = {}, style = {} }) => {
                     backgroundImage: 'linear-gradient(to bottom, var(--hero-overlay-start, rgba(0,0,0,0.6)), var(--hero-overlay-end, rgba(0,0,0,0.6)))'
                 }}></div>
             </div>
-            <div className="relative z-10 text-center px-6 max-w-5xl">
+            <div className="relative z-30 text-center px-6 max-w-5xl">
                 <h1 className="text-5xl md:text-8xl font-serif font-bold text-white mb-8 leading-tight drop-shadow-2xl">
                     <span data-dock-type="text" data-dock-bind={`sectionName.0.hero.titel`}>{heroTitle}</span>
                 </h1>

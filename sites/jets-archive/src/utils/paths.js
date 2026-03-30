@@ -17,7 +17,7 @@ export const getImageUrl = (url) => {
     const hasFolder = cleanUrl.includes('/') && firstPart !== '.';
     
     if (!hasFolder) {
-        return `${base}images/${cleanUrl}`.replace(/\/+/g, '/');
+        return `${base}${cleanUrl}`.replace(/\/+/g, '/');
     }
     
     return `${base}${cleanUrl}`.replace(/\/+/g, '/');
