@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Prevent OOM errors on 4GB systems
-export NODE_OPTIONS="--max-old-space-size=2048"
+# export NODE_OPTIONS="--max-old-space-size=2048"
 
 # ==================================================
 # 🚀 ATHENA UNIFIED LAUNCHER (v2)
