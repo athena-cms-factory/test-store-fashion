@@ -163,7 +163,7 @@ const Section = ({ data }) => {
               id={config.table.toLowerCase()}
               data-dock-section={config.table.toLowerCase()}
               className={`${bgClass} ${visibilityClass} relative transition-all duration-500 px-6`}
-              style={{ paddingTop: `${paddingVal * 4}px`, paddingBottom: `${paddingVal * 4}px` }}
+              style={{ paddingTop: `${paddingVal * 3}px`, paddingBottom: `${paddingVal * 3}px` }}
             >
               {!isVisible && isDev && <div className="absolute top-4 right-4 bg-red-500 text-white text-[10px] px-2 py-1 rounded font-bold uppercase z-50">Hidden Section</div>}
               <div className="max-w-6xl mx-auto">
@@ -229,7 +229,7 @@ const Section = ({ data }) => {
             id={config.table.toLowerCase()}
             data-dock-section={config.table.toLowerCase()}
             className={`${bgClass} ${visibilityClass} relative transition-all duration-500 px-6`}
-            style={{ paddingTop: `${paddingVal * 4}px`, paddingBottom: `${paddingVal * 4}px` }}
+            style={{ paddingTop: `${paddingVal * 3}px`, paddingBottom: `${paddingVal * 3}px` }}
           >
             {!isVisible && isDev && <div className="absolute top-4 right-4 bg-red-500 text-white text-[10px] px-2 py-1 rounded font-bold uppercase z-50">Hidden Section</div>}
 
