@@ -4,8 +4,12 @@ import { StyleInjector } from './components/StyleInjector';
 // 🔱 Athena v33 Modular Sync Bridge for Bakkerij
 function App({ data: initialData }) {
   const [data, setData] = useState(initialData || {});
-  const [sectionOrder, setSectionOrder] = useState(initialData?.section_order || []);
-  const [loading, setLoading] = useState(!initialData);
+  const [sectionOrder, setSectionOrder] = useState(
+    initialData?.section_order || 
+    initialData?.Section_Order || 
+    initialData?.SectionOrder || []
+  );
+  const [loading, setLoading] = useState(!initialData || Object.keys(initialData).length === 0);
 
   const refreshData = async () => {
     if (!import.meta.env.DEV) {
