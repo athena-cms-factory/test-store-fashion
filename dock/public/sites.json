@@ -130,11 +130,11 @@
   {
     "id": "bakkerij-janssen",
     "name": "bakkerij-janssen",
-    "siteType": "bakkerij-type",
+    "siteType": "webshop-order",
     "governance_mode": "dev-mode",
     "repoUrl": "https://github.com/athena-cms-factory/bakkerij-janssen",
     "liveUrl": "https://athena-cms-factory.github.io/bakkerij-janssen",
-    "port": 5028
+    "port": 5459
   },
   {
     "id": "karel-portfolio-ath",
