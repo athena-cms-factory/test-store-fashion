@@ -15,5 +15,9 @@
 
 ## 6. Routing & Navigation (SPA)
 *   **Router Necessity**: Components utilizing `Link` or other hooks from `react-router-dom` (like `Header.jsx`) MUST be wrapped in a `<Router>` (typically `HashRouter` for subfolder compatibility). Failure to do so will result in a white-page runtime crash.
-*   **Docked Site Scaffolding**: Ensure `App.jsx` in docked sites includes `HashRouter`, `DisplayConfigProvider`, and `StyleProvider` to support all ecosystem features.
+
+## 7. Asset Path Resolution (v8.1)
+*   **Leading Slashes**: NEVER start asset paths with `/` in JSON configuration files (like `site_settings.json`). This causes the browser to resolve to the domain root (e.g., `github.io/site-logo.svg`) instead of the site's subfolder (e.g., `github.io/athena-pro/site-logo.svg`).
+*   **Asset Standardization**: Always move logo files and other public assets to `public/images/` to maintain ecosystem consistency.
+*   **Robust Image Helpers**: Use a robust `getImageUrl` helper in components that prefixes paths with `import.meta.env.BASE_URL` and ensures the `images/` directory is included.
 
