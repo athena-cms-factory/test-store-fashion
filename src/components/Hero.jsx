@@ -6,7 +6,7 @@ import EditableImage from './EditableImage';
  * Editorial / High-Fashion Layout
  */
 export default function Hero({ data }) {
-  const info = data.Winkel_Instellingen?.[0] || {};
+  const info = data.winkel_instellingen?.[0] || {};
   const title = info.winkelnaam || "MAISON ATHENA";
   const tagline = info.slogan || "Spring / Summer 2026 Collection";
   
@@ -23,7 +23,7 @@ export default function Hero({ data }) {
             src={imgSrc} 
             alt={title} 
             className="w-full h-full object-cover" 
-            cmsBind={{ file: 'Winkel_Instellingen', index: 0, key: imageField }} 
+            cmsBind={{ file: 'winkel_instellingen', index: 0, key: imageField }} 
           />
           {/* Subtle overlay for text readability */}
           <div className="absolute inset-0 bg-black/20"></div>

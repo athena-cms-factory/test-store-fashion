@@ -7,12 +7,12 @@ import ProductCard from './ProductCard';
  * Upgraded for React 19 & Tailwind CSS v4
  */
 const Section = ({ data }) => {
-  const shopInfo = data.Winkel_Instellingen?.[0] || {};
+  const shopInfo = data.winkel_instellingen?.[0] || {};
   const valuta = shopInfo.valuta || "€";
 
   const sectionConfigs = [
     { table: "Categorieën", title: "Onze Collecties", subtitle: "Verken onze zorgvuldig samengestelde selectie" },
-    { table: "Producten", title: "Nieuwe Items", subtitle: "De meest populaire items van dit moment" },
+    { table: "producten", title: "Nieuwe Items", subtitle: "De meest populaire items van dit moment" },
     { table: "Reviews", title: "Klantervaringen", subtitle: "Wat anderen zeggen over onze service" }
   ];
 

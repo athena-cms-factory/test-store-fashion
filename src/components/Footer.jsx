@@ -5,7 +5,7 @@ import React from 'react';
  * Upgraded for React 19 & Tailwind CSS v4
  */
 export default function Footer({ data }) {
-  const info = data.Winkel_Instellingen?.[0] || {};
+  const info = data.winkel_instellingen?.[0] || {};
   const title = info.winkelnaam || "Athena Store";
 
   return (

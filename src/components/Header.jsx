@@ -6,7 +6,7 @@ import { useCart } from './CartContext';
  * Upgraded for React 19 & Tailwind CSS v4
  */
 const Header = ({ data }) => {
-  const info = data.Winkel_Instellingen?.[0] || {};
+  const info = data.winkel_instellingen?.[0] || {};
   const title = info.winkelnaam || "Athena Store";
   const { cartCount, setIsCartOpen } = useCart();
 

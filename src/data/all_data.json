@@ -1,0 +1,127 @@
+{
+  "categorieën": [
+    {
+      "naam": "Spring 24",
+      "afbeelding": "spring.jpg",
+      "field3": 0
+    },
+    {
+      "naam": "Essentials",
+      "afbeelding": "essentials.jpg",
+      "field3": 1
+    }
+  ],
+  "producten": [
+    {
+      "naam": "Oversized Coat",
+      "prijs": "€450.00",
+      "categorie": "Coats",
+      "afbeelding-url": "coat.jpg",
+      "populair": "Nee",
+      "nieuw": "Ja",
+      "beschrijving": "Wool blend structure.",
+      "field8": 0
+    },
+    {
+      "naam": "Leather Boots",
+      "prijs": "€295.00",
+      "categorie": "Footwear",
+      "afbeelding-url": "boots.jpg",
+      "populair": "Ja",
+      "nieuw": "Nee",
+      "beschrijving": "Handmade in Italy.",
+      "field8": 1
+    }
+  ],
+  "schema": {
+    "blueprint_name": "store",
+    "description": "Een minimalistische maar krachtige webshop voor producten en collecties.",
+    "data_structure": [
+      {
+        "table_name": "winkel_instellingen",
+        "description": "Algemene winkelgegevens.",
+        "columns": [
+          {
+            "name": "naam",
+            "type": "string"
+          },
+          {
+            "name": "tagline",
+            "type": "string"
+          },
+          {
+            "name": "valuta",
+            "type": "string",
+            "description": "Bv. '€' of '$'"
+          },
+          {
+            "name": "verzend_info",
+            "type": "text"
+          },
+          {
+            "name": "hero_image_prompt",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "table_name": "producten",
+        "description": "Lijst met producten.",
+        "columns": [
+          {
+            "name": "naam",
+            "type": "string"
+          },
+          {
+            "name": "prijs",
+            "type": "string"
+          },
+          {
+            "name": "afbeelding-url",
+            "type": "string",
+            "description": "URL of pad naar productfoto (bv. /images/schoen.jpg)"
+          },
+          {
+            "name": "beschrijving",
+            "type": "text"
+          },
+          {
+            "name": "categorie",
+            "type": "string"
+          },
+          {
+            "name": "populair",
+            "type": "string",
+            "description": "Ja/Nee"
+          },
+          {
+            "name": "image_prompt",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "table_name": "categorieën",
+        "columns": [
+          {
+            "name": "naam",
+            "type": "string"
+          },
+          {
+            "name": "beschrijving",
+            "type": "text"
+          }
+        ]
+      }
+    ]
+  },
+  "winkel_instellingen": [
+    {
+      "winkelnaam": "MAISON NOIR",
+      "slogan": "Essential Minimalism",
+      "valuta": "€",
+      "foto": "images/model-hero.jpg",
+      "field5": 0
+    }
+  ]
+}
