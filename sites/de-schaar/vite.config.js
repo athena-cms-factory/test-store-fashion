@@ -26,8 +26,8 @@ export default defineConfig(async ({ command }) => {
   }
 
   return {
-    // Gebruik de subpath 'athena-de-schaar' voor zowel productie (GitHub) als local (Dock)
-    base: '/athena-de-schaar/', 
+    // Gebruik de subpath 'de-schaar' voor zowel productie (GitHub) als local (Dock)
+    base: '/de-schaar/', 
     plugins: [
       react(),
       tailwindcss(),

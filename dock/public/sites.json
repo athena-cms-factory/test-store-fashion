@@ -109,13 +109,13 @@
     "port": 6001
   },
   {
-    "id": "athena-de-schaar",
-    "name": "de-schaar-site",
+    "id": "de-schaar",
+    "name": "de-schaar",
     "siteType": "de-schaar-type",
     "generatedAt": "2026-01-22T15:08:39.843Z",
     "governance_mode": "dev-mode",
-    "repoUrl": "https://github.com/athena-cms-factory/de-schaar-site",
-    "liveUrl": "https://athena-cms-factory.github.io/de-schaar-site",
+    "repoUrl": "https://github.com/athena-cms-factory/de-schaar",
+    "liveUrl": "https://athena-cms-factory.github.io/de-schaar",
     "port": 3000
   },
   {

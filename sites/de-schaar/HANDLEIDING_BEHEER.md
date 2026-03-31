@@ -1,4 +1,4 @@
-# 📘 Handleiding: de-schaar-site
+# 📘 Handleiding: de-schaar
 
 **Type Website:** de-schaar-type
 **Status:** Live & Beheerbaar via Google Sheets

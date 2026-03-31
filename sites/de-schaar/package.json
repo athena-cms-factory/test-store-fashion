@@ -1,5 +1,5 @@
 {
-  "name": "de-schaar-site",
+  "name": "de-schaar",
   "type": "module",
   "scripts": {
     "fetch-data": "node fetch-data.js",
