@@ -144,7 +144,21 @@ export class SiteController {
             return { success: true, status: 'ready', url: `http://localhost:${previewPort}/${id}/` };
         }
 
-        // 2. STOP ALLE ANDERE PREVIEWS (om resources te besparen en poort vrij te maken)
+        // 2. CHECK IF INSTALLED & AUTO-INSTALL (v8.8.2)
+        const isInstalled = fs.existsSync(path.join(siteDir, 'node_modules'));
+        if (hasPackageJson && !isInstalled) {
+            console.log(`📦 Node modules missing for ${id}. Starting automatic installation...`);
+            // We wachten hier niet op de volledige installatie (background), 
+            // maar de pm.startProcess zal waarschijnlijk toch falen of we wachten in _waitForPort.
+            // Voor een betere UX starten we de installatie.
+            await this.installManager.install(id, siteDir);
+            
+            // Geef de installatie even tijd om de eerste files te zetten of wacht op een status?
+            // Voor nu: we laten het lopen, maar preview zal waarschijnlijk timeouten als het lang duurt.
+            // De gebruiker ziet dan in de logs dat install bezig is.
+        }
+
+        // 3. STOP ALLE ANDERE PREVIEWS (om resources te besparen en poort vrij te maken)
         for (const port in activeProcesses) {
             if (activeProcesses[port].type === 'preview') {
                 console.log(`🧹 Stopping previous preview on port ${port} ('${activeProcesses[port].id}')...`);

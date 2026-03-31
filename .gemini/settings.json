@@ -13,5 +13,15 @@
         ]
       }
     ]
+  },
+  "hooksConfig": {
+    "disabled": [
+      "employee-loop",
+      "athena-after-agent-hook",
+      "maestro-session-start",
+      "maestro-before-agent",
+      "maestro-after-agent",
+      "maestro-session-end"
+    ]
   }
 }
