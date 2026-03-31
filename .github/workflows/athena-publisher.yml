@@ -56,8 +56,18 @@ jobs:
             if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
               BEFORE="HEAD~1"
             fi
-            RAW_SITES=$(git diff --name-only "$BEFORE" ${{ github.event.after }} | grep -E '^(sites|sites-external)/' | cut -d/ -f2 | sort -u | tr -d '\r' | xargs)
-            CHANGED_SITES=$(echo "$RAW_SITES" | jq -R -s -c 'split(" ") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
+            RAW_SITES=$(git diff --name-only "$BEFORE" ${{ github.event.after }} | grep -E '^(sites|sites-external)/' | cut -d/ -f2 | sort -u | tr -d '\r')
+            
+            # Filter op bestaande mappen
+            FILTERED_SITES=""
+            for SITE in $RAW_SITES; do
+              if [ -d "sites/$SITE" ] || [ -d "sites-external/$SITE" ]; then
+                FILTERED_SITES="$FILTERED_SITES $SITE"
+              else
+                echo "⏭️ Skipping $SITE because directory was removed or renamed"
+              fi
+            done
+            CHANGED_SITES=$(echo "$FILTERED_SITES" | jq -R -s -c 'split(" ") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
           fi
           if [ "$CHANGED_SITES" = "[]" ] || [ -z "$CHANGED_SITES" ]; then
             echo "any_changed=false" >> $GITHUB_OUTPUT
