@@ -69,6 +69,7 @@ async function runRenameWizard() {
 
         // 3. Configuraties bijwerken
         const siteDir = path.join(sitesDir, newName);
+        console.log(`   ⚙️  Configuraties bijwerken...`);
 
         // package.json
         const pkgPath = path.join(siteDir, 'package.json');
@@ -76,6 +77,7 @@ async function runRenameWizard() {
             const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
             pkg.name = newName;
             fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+            console.log(`      ✅ package.json bijgewerkt.`);
         }
 
         // vite.config.js
@@ -86,6 +88,7 @@ async function runRenameWizard() {
             const baseRegex = /base:\s*['\"][^'\"]*['"]/g;
             vite = vite.replace(baseRegex, `base: '/${newName}/'`);
             fs.writeFileSync(vitePath, vite);
+            console.log(`      ✅ vite.config.js bijgewerkt.`);
         }
 
         // index.html
@@ -94,15 +97,56 @@ async function runRenameWizard() {
             let html = fs.readFileSync(indexPath, 'utf8');
             html = html.replace(/<title>.*?<\/title>/, `<title>${newName}</title>`);
             fs.writeFileSync(indexPath, html);
+            console.log(`      ✅ index.html bijgewerkt.`);
         }
 
-        // 4. Git status opschonen
-        console.log(`   ⚙️  Git submodules synchroniseren...`);
-        // 4. Git status opschonen (Niet meer nodig zonder submodules)
-        
-        console.log(`\n✅ Project succesvol hernoemd!`);
+        // 4. [NIEUW] Monorepo Synchronisatie
+        console.log(`   🌐 Monorepo synchronisatie...`);
+
+        // A. Centrale Registry: dock/public/sites.json
+        const registryPath = path.resolve(root, '../dock/public/sites.json');
+        if (fs.existsSync(registryPath)) {
+            try {
+                const sites = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+                const siteIndex = sites.findIndex(s => s.id === oldName || s.name === oldName);
+                if (siteIndex !== -1) {
+                    const site = sites[siteIndex];
+                    site.id = newName;
+                    site.name = newName;
+                    
+                    // Update URLs indien gebaseerd op de oude naam
+                    if (site.repoUrl && site.repoUrl.includes(oldName)) {
+                        site.repoUrl = site.repoUrl.replace(new RegExp(oldName, 'g'), newName);
+                    }
+                    if (site.liveUrl && site.liveUrl.includes(oldName)) {
+                        site.liveUrl = site.liveUrl.replace(new RegExp(oldName, 'g'), newName);
+                    }
+                    
+                    fs.writeFileSync(registryPath, JSON.stringify(sites, null, 2));
+                    console.log(`      ✅ dock/public/sites.json (Registry) bijgewerkt.`);
+                }
+            } catch (e) {
+                console.warn(`      ⚠️  Kon Registry niet bijwerken: ${e.message}`);
+            }
+        }
+
+        // B. Deployment Record: project-settings/deployment.json
+        const deployPath = path.join(siteDir, 'project-settings/deployment.json');
+        if (fs.existsSync(deployPath)) {
+            try {
+                let deploy = fs.readFileSync(deployPath, 'utf8');
+                deploy = deploy.replace(new RegExp(oldName, 'g'), newName);
+                fs.writeFileSync(deployPath, deploy);
+                console.log(`      ✅ project-settings/deployment.json bijgewerkt.`);
+            } catch (e) {
+                console.warn(`      ⚠️  Kon Deployment record niet bijwerken: ${e.message}`);
+            }
+        }
+
+        // 5. Afronding
+        console.log(`\n✅ Project succesvol hernoemd en gesynchroniseerd!`);
         console.log(`   📍 Nieuwe locatie: ../sites/${newName}`);
-        console.log(`   🌐 Vergeet niet de site opnieuw te deployen voor de nieuwe URL.`);
+        console.log(`   🌐 Nieuwe live URL: https://athena-cms-factory.github.io/${newName}`);
 
     } catch (e) {
         console.error(`\n❌ Fout tijdens hernoemen:`, e.message);
