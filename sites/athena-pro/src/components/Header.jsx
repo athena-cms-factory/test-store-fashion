@@ -5,6 +5,18 @@ function Header({ siteSettings = {}, data }) {
   const settings = Array.isArray(siteSettings) ? (siteSettings[0] || {}) : (siteSettings || {});
   const siteName = settings.site_name || 'Athena CMS Factory';
   const displayLogo = settings.site_logo_image || "athena-icon.svg";
+  
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (typeof url === 'object') url = url.text || url.url || '';
+    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('/')) return url;
+    
+    // Use the BaseURL from Vite (empty string if slash)
+    const base = import.meta.env.BASE_URL || '/';
+    // Only prepend 'images/' if not already present
+    const path = url.startsWith('images/') ? url : `images/${url}`;
+    return (base + '/' + path).replace(new RegExp('/+', 'g'), '/');
+  };
 
   const handleScroll = (e, targetId) => {
     if (e.shiftKey) return;
@@ -25,7 +37,7 @@ function Header({ siteSettings = {}, data }) {
         <Link to="/" onClick={(e) => window.scrollTo({top: 0, behavior: 'smooth'})} className="flex items-center gap-4 group">
           
           <div className="relative w-12 h-12 overflow-hidden transition-transform duration-500">
-             <img src={displayLogo} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="_site_settings.0.site_logo_image" />
+             <img src={getImageUrl(displayLogo)} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="_site_settings.0.site_logo_image" />
           </div>
           
           <div className="flex flex-col">
